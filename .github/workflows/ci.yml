@@ -141,13 +141,13 @@ jobs:
           test -n "$tarball"
           entries="$(tar -tzf "$tarball")"
           printf '%s\n' "$entries"
-          printf '%s\n' "$entries" | rg -q '^package/cordis.patch.yml$'
-          printf '%s\n' "$entries" | rg -q '^package/lib/service.js$'
-          printf '%s\n' "$entries" | rg -q '^package/lib/skills.js$'
-          printf '%s\n' "$entries" | rg -q '^package/assets/skills/autonomous-development/SKILL.md$'
-          printf '%s\n' "$entries" | rg -q '^package/README.md$'
-          printf '%s\n' "$entries" | rg -q '^package/docs/autonomy-and-security.md$'
-          if printf '%s\n' "$entries" | rg -q '^package/(src|tests)/|\.map$'; then
+          printf '%s\n' "$entries" | grep -Eq '^package/cordis.patch.yml$'
+          printf '%s\n' "$entries" | grep -Eq '^package/lib/service.js$'
+          printf '%s\n' "$entries" | grep -Eq '^package/lib/skills.js$'
+          printf '%s\n' "$entries" | grep -Eq '^package/assets/skills/autonomous-development/SKILL.md$'
+          printf '%s\n' "$entries" | grep -Eq '^package/README.md$'
+          printf '%s\n' "$entries" | grep -Eq '^package/docs/autonomy-and-security.md$'
+          if printf '%s\n' "$entries" | grep -Eq '^package/(src|tests)/|\.map$'; then
             echo 'tarball contains source, tests, or source maps' >&2
             exit 1
           fi
