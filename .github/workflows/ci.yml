@@ -127,6 +127,9 @@ jobs:
       - name: Install Microsoft Edge
         run: pnpm exec playwright install --with-deps msedge
 
+      - name: Prepare DSH bubblewrap sandbox
+        run: bash ../harness/scripts/prepare-ci-bubblewrap.sh
+
       - name: Build package
         run: pnpm run build
 
