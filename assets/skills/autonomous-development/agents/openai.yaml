@@ -1,0 +1,4 @@
+interface:
+  display_name: "Autonomous Development"
+  short_description: "Run bounded, verifier-gated development loops"
+  default_prompt: "Use $autonomous-development to complete this workspace goal through bounded autonomous iterations and fixed verification."

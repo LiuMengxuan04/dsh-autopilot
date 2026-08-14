@@ -1,0 +1,26 @@
+- insert:
+    - id: oh-my-dsh-service
+      name: '@liumengxuan04/oh-my-dsh/service'
+      config:
+        defaultMaxGoalRounds: 256
+        maxGoalRounds: 1024
+        defaultMaxActiveMs: 604800000
+        maxActiveMs: 2592000000
+        maxVerificationAttempts: 3
+        maxDynamicPackages: 8
+        selfModification: host-only
+
+    - id: oh-my-dsh-commands
+      name: '@liumengxuan04/oh-my-dsh/commands'
+
+    - id: oh-my-dsh-tools
+      name: '@liumengxuan04/oh-my-dsh/tools'
+      config:
+        minimumEvidenceItems: 1
+        checks:
+          - name: git-diff
+            command: git diff --check
+            timeoutMs: 120000
+
+    - id: oh-my-dsh-skills
+      name: '@liumengxuan04/oh-my-dsh/skills'

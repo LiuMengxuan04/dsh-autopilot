@@ -1,0 +1,111 @@
+{
+  "name": "@liumengxuan04/oh-my-dsh",
+  "version": "0.1.0-alpha.1",
+  "description": "Bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "packageManager": "pnpm@11.7.0",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./service": {
+      "types": "./lib/service.d.ts",
+      "default": "./lib/service.js"
+    },
+    "./commands": {
+      "types": "./lib/commands.d.ts",
+      "default": "./lib/commands.js"
+    },
+    "./tools": {
+      "types": "./lib/tools.d.ts",
+      "default": "./lib/tools.js"
+    },
+    "./skills": {
+      "types": "./lib/skills.d.ts",
+      "default": "./lib/skills.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "oh-my-dsh": "./lib/doctor.js"
+  },
+  "files": [
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "cordis.patch.yml",
+    "assets/skills/**",
+    "docs/**/*.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LiuMengxuan04/oh-my-dsh.git"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsdown",
+    "clean": "node scripts/clean.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src tests scripts",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run test:coverage && pnpm run build && pnpm exec publint",
+    "pack:check": "pnpm pack --pack-destination .artifacts",
+    "prepack": "pnpm run build"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh-agent": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-commands": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-goal": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-session": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-shell": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-skill": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.5",
+    "@deepseek-ai/dsh-tools": "0.1.0-rc.5"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "yaml": "^2.4.2"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.1",
+    "@deepseek-ai/dsh": "link:../harness/apps/cli",
+    "@deepseek-ai/dsh-agent": "link:../harness/packages/core/agent",
+    "@deepseek-ai/dsh-agent-spine-demo": "link:../harness/packages/examples/agent-spine-demo",
+    "@deepseek-ai/dsh-commands": "link:../harness/packages/interaction/commands",
+    "@deepseek-ai/dsh-goal": "link:../harness/packages/goal/goal",
+    "@deepseek-ai/dsh-llm": "link:../harness/packages/llm/llm",
+    "@deepseek-ai/dsh-llm-replay": "link:../harness/packages/test-support/llm-replay",
+    "@deepseek-ai/dsh-session": "link:../harness/packages/core/session",
+    "@deepseek-ai/dsh-shell": "link:../harness/packages/shell/shell",
+    "@deepseek-ai/dsh-skill": "link:../harness/packages/skill/skill",
+    "@deepseek-ai/dsh-system-prompt": "link:../harness/packages/core/system-prompt",
+    "@deepseek-ai/dsh-tools": "link:../harness/packages/core/tools",
+    "@types/node": "^22.20.0",
+    "@vitest/coverage-v8": "^4.1.8",
+    "oxlint": "1.76.0",
+    "playwright": "1.61.1",
+    "publint": "^0.3.21",
+    "tsdown": "^0.22.2",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

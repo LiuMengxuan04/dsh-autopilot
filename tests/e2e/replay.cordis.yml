@@ -1,0 +1,46 @@
+- id: llm-deepseek
+  name: '@deepseek-ai/dsh-llm-deepseek'
+  disabled: true
+
+- id: session-title-llm
+  name: '@deepseek-ai/dsh-session-title-first-prompt-llm'
+  disabled: true
+
+# The shipped auto picker resolves to the native macOS dialog on loopback.
+# Pin the in-browser pair so the packed Web test can drive the same directory
+# flow deterministically on every CI host.
+- id: directory-picker
+  disabled: true
+
+- insert:
+    - id: oh-my-dsh-e2e-directory-picker
+      name: '@deepseek-ai/dsh-host-directory-picker-browse'
+    - id: oh-my-dsh-e2e-directory-picker-ui
+      name: '@deepseek-ai/dsh-client-ui-directory-picker-browse'
+
+- id: session-persistence-jsonl
+  name: '@deepseek-ai/dsh-session-persistence-jsonl'
+  config:
+    root: !!js process.env.OH_MY_DSH_E2E_SESSIONS
+    compression: none
+
+- id: oh-my-dsh-tools
+  name: '@liumengxuan04/oh-my-dsh/tools'
+  config:
+    minimumEvidenceItems: 1
+    maxOutputChars: 4000
+    checks:
+      - name: e2e-artifact
+        command: !!js process.env.OH_MY_DSH_E2E_VERIFY
+        timeoutMs: 30000
+
+- insert:
+    - id: oh-my-dsh-e2e-replay
+      name: '@deepseek-ai/dsh-llm-replay'
+      config:
+        providers:
+          - id: deepseek-official
+            name: DeepSeek Replay
+            models:
+              - id: deepseek-v4-flash
+                contextWindow: 128000
