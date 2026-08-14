@@ -52,7 +52,7 @@ async function rpc<T>(baseUrl: string, method: string, payload: unknown): Promis
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       type: 'client-request',
-      rpcId: `oh-my-dsh-${method}-${Date.now()}`,
+      rpcId: `dsh-autopilot-${method}-${Date.now()}`,
       method,
       payload,
     }),
@@ -189,17 +189,17 @@ afterEach(async () => {
   activeBrowser = undefined
   if (activeProcess !== undefined) await stopWeb(activeProcess)
   activeProcess = undefined
-  if (temporaryRoot !== undefined && process.env['OH_MY_DSH_E2E_PRESERVE'] !== '1') {
+  if (temporaryRoot !== undefined && process.env['DSH_AUTOPILOT_E2E_PRESERVE'] !== '1') {
     rmSync(temporaryRoot, { recursive: true, force: true })
   } else if (temporaryRoot !== undefined) {
-    process.stderr.write(`oh-my-dsh e2e preserved: ${temporaryRoot}\n`)
+    process.stderr.write(`dsh-autopilot e2e preserved: ${temporaryRoot}\n`)
   }
   temporaryRoot = undefined
 })
 
 describe('packed bundle in a real DSH Web profile', () => {
   it('installs, runs a Host-only Cordis extension, verifies two rounds, and persists completion', async () => {
-    temporaryRoot = mkdtempSync(join(tmpdir(), 'oh-my-dsh-e2e-'))
+    temporaryRoot = mkdtempSync(join(tmpdir(), 'dsh-autopilot-e2e-'))
     const dist = join(temporaryRoot, 'dist')
     const dshHome = join(temporaryRoot, 'dsh-home')
     const agentsHome = join(temporaryRoot, 'agents-home')
@@ -217,20 +217,20 @@ describe('packed bundle in a real DSH Web profile', () => {
     const profileEnv = { ...process.env, DSH_HOME: dshHome, DSH_AGENTS_HOME: agentsHome }
     dsh(['plugin', '--profile', 'web', 'add', tarball, REPLAY_PACKAGE], profileEnv, workspace)
     const dumped = dsh(['--profile', 'web', '--dump-config'], profileEnv, workspace)
-    for (const id of ['oh-my-dsh-service', 'oh-my-dsh-commands', 'oh-my-dsh-tools', 'oh-my-dsh-skills']) {
+    for (const id of ['dsh-autopilot-service', 'dsh-autopilot-commands', 'dsh-autopilot-tools', 'dsh-autopilot-skills']) {
       expect(dumped.match(new RegExp(`(?:^|\\n)\\s*(?:- )?id: ${id}(?:\\n|$)`, 'gu'))).toHaveLength(1)
     }
 
     const doctor = dsh(
-      ['plugin', '--profile', 'web', 'exec', 'oh-my-dsh', 'doctor', '--profile', 'web'],
-      { ...profileEnv, OH_MY_DSH_DSH_BIN: DSH_BIN },
+      ['plugin', '--profile', 'web', 'exec', 'dsh-autopilot', 'doctor', '--profile', 'web'],
+      { ...profileEnv, DSH_AUTOPILOT_DSH_BIN: DSH_BIN },
       workspace,
     )
     expect(doctor).toContain('correctly installed')
 
     const verifierScript = [
       "import { readFileSync } from 'node:fs'",
-      "if (readFileSync('e2e-proof.txt', 'utf8') !== 'OH_MY_DSH_E2E\\n') process.exit(1)",
+      "if (readFileSync('e2e-proof.txt', 'utf8') !== 'DSH_AUTOPILOT_E2E\\n') process.exit(1)",
     ].join('; ')
     const verifyCommand = `${JSON.stringify(process.execPath)} --input-type=module -e ${JSON.stringify(verifierScript)}`
     const { baseUrl, handle } = await startWeb(
@@ -242,13 +242,13 @@ describe('packed bundle in a real DSH Web profile', () => {
           DSH_PERMISSION_MODE: 'workspace-write',
           DSH_SNAPSHOT_FILE: UNUSED_FIXTURE,
           DSH_SNAPSHOT_OVERRIDE: OVERRIDE,
-          OH_MY_DSH_E2E_SESSIONS: sessions,
-          OH_MY_DSH_E2E_VERIFY: verifyCommand,
+          DSH_AUTOPILOT_E2E_SESSIONS: sessions,
+          DSH_AUTOPILOT_E2E_VERIFY: verifyCommand,
         },
       },
     )
 
-    const browserChannel = process.env['OH_MY_DSH_E2E_BROWSER_CHANNEL']
+    const browserChannel = process.env['DSH_AUTOPILOT_E2E_BROWSER_CHANNEL']
     activeBrowser = await chromium.launch(browserChannel === undefined
       ? {}
       : { channel: browserChannel as 'msedge' | 'chrome' })
@@ -271,7 +271,7 @@ describe('packed bundle in a real DSH Web profile', () => {
 
     const history = await waitForCompletion(baseUrl, sessionId, handle.output)
     const events = history.events.map(item => item.event)
-    expect(readFileSync(join(workspace, 'e2e-proof.txt'), 'utf8')).toBe('OH_MY_DSH_E2E\n')
+    expect(readFileSync(join(workspace, 'e2e-proof.txt'), 'utf8')).toBe('DSH_AUTOPILOT_E2E\n')
     expect(events.filter(event => event.type === 'step/start')).toHaveLength(9)
     expect(events.filter(event => event.type === 'turn/end')).toHaveLength(2)
     expect(events.flatMap(event => event.type === 'tool/call'

@@ -1,6 +1,6 @@
 ---
 name: autonomous-development
-description: Run a software-development objective through Oh My DSH's bounded Autopilot, including iterative implementation, evidence gathering, fixed verification, repair rounds, pause/resume handling, and optional Host-only dynamic Cordis extension. Use when a user asks for long-running autonomous coding, asks the agent to continue until tests pass, invokes `/autopilot`, or needs a durable multi-round DSH Goal completed without model-owned approval or completion.
+description: Run a software-development objective through DSH Autopilot's bounded Autopilot, including iterative implementation, evidence gathering, fixed verification, repair rounds, pause/resume handling, and optional Host-only dynamic Cordis extension. Use when a user asks for long-running autonomous coding, asks the agent to continue until tests pass, invokes `/autopilot`, or needs a durable multi-round DSH Goal completed without model-owned approval or completion.
 ---
 
 # Autonomous Development
@@ -35,11 +35,11 @@ Do not stop merely because one model turn ends. Do stop for a missing human deci
 
 ## Extend Cordis only when needed
 
-Prefer installed DSH capabilities. Dynamic Cordis requires the current DSH Agent preset to provide `cordis_define` and `cordis_run`; recommend the shipped `cordis` preset when the user needs this capability. Do not imply that Oh My DSH adds those tools to another preset.
+Prefer installed DSH capabilities. Dynamic Cordis requires the current DSH Agent preset to provide `cordis_define` and `cordis_run`; recommend the shipped `cordis` preset when the user needs this capability. Do not imply that DSH Autopilot adds those tools to another preset.
 
 Define a dynamic Cordis Package only when it materially enables the current Goal and the active lease permits it.
 
-Under `host-only`, omit Client code and activate only the exact Package successfully defined in this lease. No additional Oh My DSH approval is required for that eligible Host-only path, but it grants no additional authority. Treat the Cordis VM as an execution mechanism, not a sandbox. Do not use self-extension to widen filesystem, shell, network, credential, approval, or deployment permissions.
+Under `host-only`, omit Client code and activate only the exact Package successfully defined in this lease. No additional DSH Autopilot approval is required for that eligible Host-only path, but it grants no additional authority. Treat the Cordis VM as an execution mechanism, not a sandbox. Do not use self-extension to widen filesystem, shell, network, credential, approval, or deployment permissions.
 
 Under `client-approved`, let DSH's native Client approval flow decide. Never represent approval as granted before DSH reports it. Under `off`, do not attempt definition or activation.
 

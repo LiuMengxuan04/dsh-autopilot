@@ -92,7 +92,7 @@ describe('AutonomyService lifecycle', () => {
     expect(ctx.autonomy.get(agent)).toMatchObject({ phase: 'exhausted', remainingActiveMs: 0 })
     expect(ctx.goals.get(agent)).toMatchObject({ phase: 'paused', activation: 'disarmed' })
     expect(agent.cancel).toHaveBeenCalledWith(
-      { kind: 'hook', reason: 'oh-my-dsh lease expired' },
+      { kind: 'hook', reason: 'dsh-autopilot lease expired' },
       { keepInbox: true },
     )
 
@@ -244,6 +244,8 @@ describe('AutonomyService lifecycle', () => {
   })
 
   it('creates a fresh post-restart lease with an explicit duration', async () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(1000)
     const { ctx, agent } = await createHarness({
       autonomy: { defaultMaxActiveMs: 1000, maxActiveMs: 5000 },
     })

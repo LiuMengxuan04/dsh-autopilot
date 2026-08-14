@@ -6,7 +6,7 @@ import { GoalError } from '@deepseek-ai/dsh-goal'
 import type { GoalView } from '@deepseek-ai/dsh-goal'
 import { AutonomyError } from './service.ts'
 
-export const name = 'oh-my-dsh-commands'
+export const name = 'dsh-autopilot-commands'
 export const inject = ['agents', 'autonomy', 'commands', 'goals']
 
 /** Command syntax shown in UI errors and discovery. */

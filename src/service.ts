@@ -562,11 +562,11 @@ export class AutonomyService extends Service {
       try {
         this.ctx.goals.pause(agent, goalRef(goal))
       } catch (error: unknown) {
-        this.ctx.logger.warn(`oh-my-dsh: could not pause expired Goal: ${String(error)}`)
+        this.ctx.logger.warn(`dsh-autopilot: could not pause expired Goal: ${String(error)}`)
         this.ctx.goals.disarm(agent)
       }
     }
-    agent.cancel({ kind: 'hook', reason: 'oh-my-dsh lease expired' }, { keepInbox: true })
+    agent.cancel({ kind: 'hook', reason: 'dsh-autopilot lease expired' }, { keepInbox: true })
   }
 }
 

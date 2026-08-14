@@ -1,88 +1,132 @@
-# Oh My DSH
+# DSH Autopilot
 
-Bounded, verifier-gated autonomous development for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
+[简体中文](README.zh-CN.md)
 
-Oh My DSH is an independent DSH bundle. Installing it adds four additive plugin rows to a selected profile; it does not patch, fork, or write into the DSH repository. Removing the bundle removes those contributions again.
+Long-running, verifier-gated autonomous development for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
-The first alpha focuses on one dependable loop: a human authorizes a durable DSH Goal, the model may iterate for days instead of hours, deployment-fixed checks own completion, and a process restart always requires an explicit human resume.
+DSH Autopilot turns DSH's native Goal loop, tool policy, shell execution, Skill service, and dynamic Cordis tools into one bounded autonomous workflow. A human grants an explicit lease, the model can work across many Goal rounds, deployment-owned checks decide completion, and optional Host-only Cordis Packages can fill capability gaps without modifying the DSH repository.
+
+> [!IMPORTANT]
+> DSH Autopilot is an independent, third-party project. It is not a DeepSeek product, a DSH fork, or a way to bypass DSH permissions. Every contribution is installed as an additive Cordis plugin row and can be removed again.
+
+## Why this project exists
+
+DSH already provides the important primitives: durable Goals, automatic Goal rounds, workflows and subagents, tool guards, shell execution, session logs, and runtime Cordis Packages. What it does not provide as one product surface is a human-controlled long-running development loop with a fixed completion gate.
+
+DSH Autopilot adds that control layer:
+
+1. a human authorizes a concrete objective, round limit, and active-time budget;
+2. DSH keeps the native Goal moving across model turns;
+3. the model implements, inspects, tests, and repairs the workspace;
+4. only deployment-configured verifier commands may complete the Goal;
+5. optional dynamic Cordis extension remains inside the selected DSH preset and permission policy;
+6. pause, expiry, shutdown, and restart fail closed.
+
+The default lease supports work measured in days rather than hours: 256 Goal rounds and seven days of active time. Deployment ceilings default to 1,024 rounds and 30 active days. Paused time is not charged.
+
+## What DSH Autopilot adds
+
+| Capability | What it adds to DSH |
+|---|---|
+| Human authorization | `/autopilot start`, `status`, `pause`, `resume`, and `stop` commands on a top-level Agent. The model cannot grant or extend its own lease. |
+| Long-running Goal control | A bounded, process-local autonomy lease around DSH's native durable Goal and Goal Round Driver. |
+| Verifier-owned completion | `autopilot_verify` runs deployment-fixed commands. Direct model completion is guarded while a lease is active. |
+| Repair rounds | A failed verifier rearms the same Goal with inspectable results so the next round can repair the failure. |
+| Resource limits | Active duration, Goal rounds, verification attempts, and successful dynamic Package definitions are bounded independently. |
+| Dynamic Cordis policy | `off`, `host-only`, and `client-approved` modes guard DSH's existing `cordis_define` and `cordis_run` tools. |
+| Model context | `get_autopilot` and a system-prompt policy section expose the current Goal, lease phase, and remaining budgets. |
+| Bundled workflow skill | An `autonomous-development` skill teaches compatible DSH presets how to operate the loop and hand completion to the verifier. |
+| Installation diagnostics | `dsh-autopilot doctor` checks Node compatibility and verifies that every bundle row appears exactly once. |
+
+The package installs four additive Cordis rows:
+
+| Row | Responsibility |
+|---|---|
+| `dsh-autopilot-service` | Validate deployment limits and own process-local autonomy leases. |
+| `dsh-autopilot-commands` | Register the human `/autopilot` command. |
+| `dsh-autopilot-tools` | Register model tools, policy context, completion guards, verifier execution, and dynamic-Package accounting. |
+| `dsh-autopilot-skills` | Register the packaged workflow skill through DSH's public Skill service. |
+
+No DSH source file is patched or replaced.
+
+## Lifecycle at a glance
+
+```mermaid
+flowchart LR
+    A["Human: /autopilot start"] --> B["Native DSH Goal + process-local lease"]
+    B --> C["Implement, inspect, test"]
+    C --> D["autopilot_verify"]
+    D -->|"checks fail"| E["Repair round"]
+    E --> C
+    D -->|"all checks pass"| F["Goal completed"]
+    B -->|"pause, expiry, or shutdown"| G["Goal disarmed"]
+    G -->|"human resume"| B
+```
+
+The native Goal is session-durable. The authorization lease, expiry timer, verification counter, and dynamic-Package receipts are deliberately process-local. After DSH restarts, the Goal remains disarmed until a human explicitly runs `/autopilot resume`.
 
 ## Status and compatibility
 
-This repository is pre-release software. It is developed and tested against DSH `0.1.0-rc.5` and Cordis `4.0.1` on Node.js `^22.19.0` and `>=24.0.0`.
+This repository is pre-release software. The current alpha is developed and tested against:
 
-The default authorization is:
+- DSH `0.1.0-rc.5`;
+- `@deepseek-ai/cordis` `4.0.1`;
+- Node.js `^22.19.0` or `>=24.0.0`.
 
-- 256 Goal rounds, with a deployment default ceiling of 1024 rounds;
-- seven days of active lease time, with a deployment default ceiling of 30 days;
-- at most three verification attempts and eight dynamic Packages per lease;
-- Host-only dynamic Cordis self-extension.
+DSH is still in release-candidate development, so this project intentionally uses narrow peer versions and validates upgrades explicitly.
 
-Active time stops while a lease is paused. A duration is not an unattended process-lifetime promise: shutting down or restarting DSH leaves the durable Goal disarmed and removes the process-local lease.
+## Installation
 
-## Install
+The supported alpha installation path is a prebuilt npm tarball from a GitHub Release or a tarball packed from a local checkout. The canonical package identity is `@liumengxuan04/dsh-autopilot`; do not substitute an unscoped package with a similar name.
 
-The first alpha is installed from a prebuilt GitHub Release tarball or a tarball packed from a local checkout. The unscoped npm name `oh-my-dsh` belongs to an unrelated project; do not install it. The reserved package identity for this repository is `@liumengxuan04/oh-my-dsh`.
+### Install a GitHub Release artifact
 
-To install a GitHub Release artifact, download the `.tgz` attached to the release and pass that file to DSH. With `gh`:
+Download the `.tgz` attached to the release, then install that exact artifact into a DSH profile:
 
 ```sh
 mkdir -p .artifacts
 gh release download v0.1.0-alpha.1 \
-  --repo LiuMengxuan04/oh-my-dsh \
-  --pattern 'liumengxuan04-oh-my-dsh-*.tgz' \
+  --repo LiuMengxuan04/dsh-autopilot \
+  --pattern 'liumengxuan04-dsh-autopilot-*.tgz' \
   --dir .artifacts
-dsh plugin --profile web add ./.artifacts/liumengxuan04-oh-my-dsh-0.1.0-alpha.1.tgz
+
+dsh plugin --profile web add \
+  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+dsh --profile web --dump-config
+dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
-From this checkout, with the pinned DSH repository available at `../harness`, build and pack the artifact:
+### Build a local tarball
+
+Development currently uses an exact sibling DSH checkout at `../harness`:
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm pack --pack-destination .artifacts
-dsh plugin --profile web add ./.artifacts/liumengxuan04-oh-my-dsh-0.1.0-alpha.1.tgz
-dsh --profile web --dump-config
-dsh plugin --profile web exec oh-my-dsh doctor --profile web
+
+dsh plugin --profile web add \
+  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
-Installing the GitHub source repository directly is not supported: this TypeScript package intentionally has no git-install `prepare` path. Do not use a `github:`, `git+https:`, or repository-directory spec. Use a prebuilt `.tgz` so the installed code is the exact reviewed release artifact.
+Direct installation from `github:` or `git+https:` is not supported. This TypeScript package intentionally has no git-install `prepare` path; use a prebuilt tarball so the installed JavaScript matches the reviewed release artifact.
 
-If the scoped package is published to a registry in a later release, the equivalent command will be:
+After the scoped package is published to npm, the equivalent command will be:
 
 ```sh
-dsh plugin --profile web add @liumengxuan04/oh-my-dsh@0.1.0-alpha.1
+dsh plugin --profile web add @liumengxuan04/dsh-autopilot@0.1.0-alpha.1
 ```
 
-`doctor` checks the Node version and verifies that all four Oh My DSH rows occur exactly once in the resolved profile. It does not start an agent or call a model.
+## Quick start
 
-## Authorize and control a run
+### 1. Configure meaningful verification
 
-Start DSH, then enter these commands through a command-capable surface such as DSH Web:
+The bundled default only runs `git diff --check`, which is a packaging-safe smoke check, not sufficient proof for most projects. Before authorizing serious work, configure commands that match the repository's acceptance criteria.
 
-```text
-/autopilot start Build the requested feature and verify every acceptance criterion.
-/autopilot start --rounds 512 --duration 14d Complete the migration and prove it is safe.
-/autopilot status
-/autopilot pause
-/autopilot resume --duration 7d
-/autopilot stop
-```
-
-`start` creates and arms a native durable Goal, then grants a process-local lease. `pause` freezes remaining active time and pauses the Goal. A same-process `resume` continues that remaining interval; after a restart, `resume` grants a new interval. `stop` revokes the current lease and pauses the Goal. Command inputs and Goal changes use DSH's native session records.
-
-During an active run, the model receives:
-
-- `get_autopilot`, which reports Goal, lease, verification, and dynamic-Package budgets;
-- `autopilot_verify`, the only completion path while Autopilot is active;
-- policy context that tells it to continue across Goal rounds until verification passes.
-
-The verifier runs only deployment-authored shell commands. A model supplies a summary and evidence notes, but cannot replace the commands. A failed check starts a repair round; a passed set completes the native Goal.
-
-## Configure
-
-Later DSH patch layers may replace the bundle defaults. A DSH patch replaces a row's entire `config`, so restate every field for a row you override. For example, add this to `$DSH_HOME/profiles/web/cordis.patch.yml`:
+Later DSH patch layers can replace the bundle configuration. A Cordis patch replaces a row's complete `config`, so restate every field when overriding it. For example, add the following to `$DSH_HOME/profiles/web/cordis.patch.yml`:
 
 ```yaml
-- id: oh-my-dsh-service
+- id: dsh-autopilot-service
   config:
     defaultMaxGoalRounds: 512
     maxGoalRounds: 1024
@@ -92,7 +136,7 @@ Later DSH patch layers may replace the bundle defaults. A DSH patch replaces a r
     maxDynamicPackages: 8
     selfModification: host-only
 
-- id: oh-my-dsh-tools
+- id: dsh-autopilot-tools
   config:
     minimumEvidenceItems: 2
     maxOutputChars: 8000
@@ -100,57 +144,135 @@ Later DSH patch layers may replace the bundle defaults. A DSH patch replaces a r
       - name: types
         command: pnpm run typecheck
         timeoutMs: 300000
-      - name: focused-tests
+      - name: tests
         command: pnpm run test
         timeoutMs: 600000
 ```
 
-Supported self-modification modes are:
+Restart the affected DSH profile after changing its patch.
 
-- `off`: deny autonomous `cordis_define` and `cordis_run` calls;
-- `host-only`: permit activation only for a Package defined without Client code during the current lease;
-- `client-approved`: let DSH's native Client-bearing Package approval path decide.
+### 2. Choose the DSH Agent preset
 
-Dynamic Cordis is available only when the session's DSH Agent preset contributes `cordis_define` and `cordis_run`; select DSH's shipped `cordis` preset when this capability is required. Oh My DSH does not add those tools to a preset.
+Autopilot itself works with a command-capable DSH composition. If the model must create a temporary Cordis capability, select DSH's shipped `cordis` preset before starting the run. That preset supplies `cordis_define` and `cordis_run`.
 
-Host-only requires no additional Oh My DSH approval for an eligible Host-only definition, but it grants no new authority: existing DSH tool availability, filesystem, shell, sandbox, credential, and permission policies still decide what the Host process can do. Client-half code continues through DSH's native approval path. Host-only is a cooperative policy enforced through tool guards and process-local receipts, and Cordis VM execution is not a security boundary. Read [Autonomy and security](docs/autonomy-and-security.md) before enabling self-extension in a sensitive workspace.
+DSH Autopilot does not inject those tools into `standard`, `code`, or another preset. A tool absent from the current Agent composition remains unavailable.
 
-## Bundled skill
+### 3. Start a bounded run
 
-The package ships `assets/skills/autonomous-development/SKILL.md` and registers it through DSH's public Skill Service under provider name `oh-my-dsh`. It is available to compatible Agent presets without copying anything into the user's skill directories. Removing the bundle removes the registration.
+Start DSH Web and enter the command in a top-level session:
+
+```text
+/autopilot start Build the requested feature and verify every acceptance criterion.
+```
+
+Override the default lease when the task needs a different authorized budget:
+
+```text
+/autopilot start --rounds 512 --duration 14d Complete the migration and prove it is safe.
+```
+
+Supported duration units are `ms`, `s`, `m`, `h`, `d`, and `w`. A request may lower or raise the default only within deployment ceilings.
+
+### 4. Observe and control it
+
+```text
+/autopilot status
+/autopilot pause
+/autopilot resume
+/autopilot resume --duration 7d
+/autopilot stop
+```
+
+- `status` reports Goal phase, activation, rounds, remaining active time, verifier attempts, Package count, and self-modification mode.
+- `pause` disarms the Goal and freezes the remaining same-process active interval.
+- `resume` rearms the Goal. After a process restart, it creates a new human-authorized lease.
+- `stop` revokes the lease and pauses the native Goal without deleting DSH session history.
+
+The model uses `get_autopilot` to inspect the same budgets. When it believes the objective is ready, it calls `autopilot_verify` with a summary and evidence list. The model cannot choose the verifier commands. A failed check returns a repair round; all configured checks must pass before the plugin completes the native Goal.
+
+## Dynamic Cordis self-extension
+
+Autopilot can govern DSH's existing runtime Cordis tools during an active lease:
+
+- `off` denies autonomous `cordis_define` and `cordis_run` calls;
+- `host-only` accepts definitions without Client code and allows `cordis_run` only for the exact successful `(pluginId, packageId)` receipt created by the same Agent and lease;
+- `client-approved` leaves Client-bearing execution to DSH's native approval flow.
+
+`host-only` is the default. Successful definitions consume the configured Package budget. Failed definitions, another Agent's definitions, old leases, and definitions from an earlier process do not authorize activation.
+
+This feature does **not** install npm packages, persist generated plugins, widen the sandbox, expose credentials, or bypass approval. The Cordis VM is an execution mechanism, not a security boundary. Read [Autonomy and security](docs/autonomy-and-security.md) before enabling self-extension in a sensitive workspace.
+
+## Security model and current limits
+
+DSH Autopilot only narrows what an active model may do; it does not grant authority that the selected DSH profile lacks. Filesystem, shell, subprocess, network, credential, sandbox, and approval policy remain owned by DSH and the host operating system.
+
+The first alpha intentionally does not claim:
+
+- unattended recovery after a process or machine restart;
+- durable autonomy leases or dynamic Cordis Packages;
+- approval-free Client code execution;
+- a security sandbox for dynamic Host JavaScript;
+- semantic proof beyond the configured verifier commands;
+- a UI panel, remote scheduler, or background daemon.
+
+For long runs, preserve important workspace state, use a constrained DSH permission profile, avoid production credentials, configure meaningful verifier checks, and choose the smallest adequate lease.
+
+## Architecture
+
+The npm manifest exposes `cordis.patch.yml` as a normal DSH bundle layer. It inserts four namespaced rows and imports only published DSH service definitions. Registrations use Cordis lifecycle effects, so unloading the bundle disposes its commands, tools, context, timers, and skill contribution.
+
+DSH remains the source of truth for the Goal and transcript. Autopilot does not modify `agent-loop`, write hidden state into the DSH repository, or maintain a competing Goal ledger.
+
+See:
+
+- [Architecture](docs/architecture.md)
+- [Autonomy and security](docs/autonomy-and-security.md)
+- [Testing](docs/testing.md)
+
+## Design influences and references
+
+DSH Autopilot is an independent implementation, not a fork of any project below. No compatibility or affiliation is implied.
+
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) supplies the plugin architecture, native Goal and Goal Round Driver, session history, tool guards, shell capability, Skill service, and dynamic Cordis execution that this bundle composes.
+- [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) inspired the emphasis on persistent long-task workflows, explicit completion evidence, repair loops, and operationally visible progress.
+- [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent), formerly `oh-my-opencode`, informed the goal-continuation UX and the idea of combining existing agent capabilities behind a concise activation surface.
+
+The deliberate DSH-specific differences are equally important: authorization is an explicit human lease, verifier commands belong to deployment configuration, runtime extension uses native Cordis tools, restart always disarms execution, and the bundle never patches DSH.
 
 ## Uninstall
 
-Pause or stop any live Autopilot run, stop the affected DSH process, and remove the bundle:
+Pause or stop a live run, stop the affected DSH process, and remove the bundle:
 
 ```sh
-dsh plugin --profile web remove @liumengxuan04/oh-my-dsh
+dsh plugin --profile web remove @liumengxuan04/dsh-autopilot
 dsh --profile web --dump-config
 ```
 
-Uninstalling removes the profile dependency and bundle layer. It does not delete native DSH session logs or Goals. A Goal that survived a prior shutdown remains durable and disarmed until a user handles it through DSH.
+Uninstalling removes the profile dependency and bundle rows. It does not delete native DSH session logs or Goals.
 
-## Develop and test
+## Development and verification
 
-This checkout expects a sibling `../harness` checkout at the DSH revision used by `package.json` development links.
+Place this repository beside the pinned DSH checkout:
+
+```text
+code/
+├── harness/
+└── dsh-autopilot/
+```
+
+Then run:
 
 ```sh
-pnpm install
+pnpm install --frozen-lockfile
 pnpm run typecheck
 pnpm run lint
 pnpm run test:coverage
 pnpm run build
 pnpm exec publint
-OH_MY_DSH_E2E_BROWSER_CHANNEL=msedge pnpm run test:e2e
+DSH_AUTOPILOT_E2E_BROWSER_CHANNEL=msedge pnpm run test:e2e
 ```
 
-The release acceptance E2E uses the installed system Microsoft Edge channel. It creates an isolated temporary `DSH_HOME`, installs the tarball into a real Web profile, selects DSH's `cordis` preset, drives `/autopilot start` through DSH Web, defines and runs a Host-only dynamic tool without extra approval, cleans it up, replays two Goal rounds, runs a fixed verifier, and checks durable completion. It never edits the sibling DSH checkout.
-
-## Design documents
-
-- [Architecture](docs/architecture.md)
-- [Autonomy and security](docs/autonomy-and-security.md)
-- [Testing](docs/testing.md)
+The keyless packed E2E installs the tarball into an isolated real DSH Web profile, selects the `cordis` preset, starts Autopilot through the command UI, defines and runs a Host-only dynamic tool, replays two Goal rounds, executes a fixed verifier, and checks durable completion. It never edits the sibling DSH checkout.
 
 ## License
 

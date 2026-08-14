@@ -15,7 +15,7 @@ let callSequence = 0
 function executeTool(ctx: Context, agent: Agent, name: string, args: unknown = {}) {
   callSequence += 1
   return ctx.tools.execute({
-    callId: CallId(`oh-my-dsh-call-${callSequence}`),
+    callId: CallId(`dsh-autopilot-call-${callSequence}`),
     name,
     arguments: args,
     agent,
@@ -58,9 +58,9 @@ describe('model-facing autonomy context', () => {
   it('exposes status and logs only active policy text into prompt assembly', async () => {
     const { ctx, agent } = await createHarness()
     const subjectless = await ctx.systemPrompt.assemble()
-    expect(subjectless.contexts.find(item => item.name === 'oh-my-dsh:autopilot')?.text).toBe('')
+    expect(subjectless.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text).toBe('')
     const before = await ctx.systemPrompt.assemble(assembleContextFor(agent))
-    expect(before.contexts.find(item => item.name === 'oh-my-dsh:autopilot')?.text).toBe('')
+    expect(before.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text).toBe('')
     expect(await executeTool(ctx, agent, 'get_autopilot')).toMatchObject({
       isError: false, value: { goal: null, lease: null },
     })
@@ -74,7 +74,7 @@ describe('model-facing autonomy context', () => {
 
     startGoal(ctx, agent)
     const active = await ctx.systemPrompt.assemble(assembleContextFor(agent))
-    expect(active.contexts.find(item => item.name === 'oh-my-dsh:autopilot')?.text)
+    expect(active.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text)
       .toContain('Dynamic Cordis policy: host-only')
     const status = await executeTool(ctx, agent, 'get_autopilot')
     expect(status).toMatchObject({
@@ -92,7 +92,7 @@ describe('model-facing autonomy context', () => {
       value: { lease: { phase: 'paused', reason: 'waiting for a human' } },
     })
     const paused = await ctx.systemPrompt.assemble(assembleContextFor(agent))
-    expect(paused.contexts.find(item => item.name === 'oh-my-dsh:autopilot')?.text).toBe('')
+    expect(paused.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text).toBe('')
     await ctx.fiber.dispose()
   })
 

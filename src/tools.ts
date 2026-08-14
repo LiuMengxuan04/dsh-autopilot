@@ -9,7 +9,7 @@ import type { ToolDispatchExecution, ToolExecution, ToolExecutionResult } from '
 import z from '@deepseek-ai/schemastery'
 import { AutonomyError } from './service.ts'
 
-export const name = 'oh-my-dsh-tools'
+export const name = 'dsh-autopilot-tools'
 export const inject = ['autonomy', 'goals', 'shell', 'systemPrompt', 'tools']
 
 /** Deployment-authored deterministic verification command. */
@@ -251,7 +251,7 @@ export function apply(ctx: Context, config: Config): void {
   const pendingDefinitions = new Map<Agent, number>()
 
   ctx.systemPrompt.context({
-    name: 'oh-my-dsh:autopilot',
+    name: 'dsh-autopilot:autopilot',
     order: 160,
     text: ({ agent }) => {
       if (agent === undefined) return ''
@@ -317,7 +317,7 @@ export function apply(ctx: Context, config: Config): void {
         hostPackages.set(exec.agent, packages)
       }
     } catch (error: unknown) {
-      ctx.logger.warn(`oh-my-dsh: could not account dynamic Package: ${String(error)}`)
+      ctx.logger.warn(`dsh-autopilot: could not account dynamic Package: ${String(error)}`)
     }
   })
 
@@ -431,7 +431,7 @@ export function apply(ctx: Context, config: Config): void {
               message,
             })
           } catch (blockError: unknown) {
-            ctx.logger.warn(`oh-my-dsh: could not block Goal after verifier error: ${String(blockError)}`)
+            ctx.logger.warn(`dsh-autopilot: could not block Goal after verifier error: ${String(blockError)}`)
             ctx.goals.disarm(agent)
           }
         }

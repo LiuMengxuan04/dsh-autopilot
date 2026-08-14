@@ -2,18 +2,18 @@
 
 ## Product boundary
 
-Oh My DSH is an out-of-tree DSH bundle. Its npm manifest points DSH at `cordis.patch.yml`; the patch inserts four additive rows with stable IDs. It does not override a DSH row, import private DSH source paths, or require a change in the DSH repository.
+DSH Autopilot is an out-of-tree DSH bundle. Its npm manifest points DSH at `cordis.patch.yml`; the patch inserts four additive rows with stable IDs. It does not override a DSH row, import private DSH source paths, or require a change in the DSH repository.
 
-DSH applies bundle patches before profile, home, and command-line overlays. Operators can therefore override or disable Oh My DSH through normal Cordis patch composition. Removing the dependency removes the complete runtime contribution.
+DSH applies bundle patches before profile, home, and command-line overlays. Operators can therefore override or disable DSH Autopilot through normal Cordis patch composition. Removing the dependency removes the complete runtime contribution.
 
 ## Runtime components
 
 | Row | Module | Responsibility |
 |---|---|---|
-| `oh-my-dsh-service` | `@liumengxuan04/oh-my-dsh/service` | Validate deployment limits and own process-local autonomy leases. |
-| `oh-my-dsh-commands` | `@liumengxuan04/oh-my-dsh/commands` | Register the human `/autopilot` command and translate it into native Goal and lease operations. |
-| `oh-my-dsh-tools` | `@liumengxuan04/oh-my-dsh/tools` | Add model context, status and verifier tools, completion guards, fixed checks, and dynamic-Package accounting. |
-| `oh-my-dsh-skills` | `@liumengxuan04/oh-my-dsh/skills` | Read, validate, and register the packaged skill through DSH's public Skill Service. |
+| `dsh-autopilot-service` | `@liumengxuan04/dsh-autopilot/service` | Validate deployment limits and own process-local autonomy leases. |
+| `dsh-autopilot-commands` | `@liumengxuan04/dsh-autopilot/commands` | Register the human `/autopilot` command and translate it into native Goal and lease operations. |
+| `dsh-autopilot-tools` | `@liumengxuan04/dsh-autopilot/tools` | Add model context, status and verifier tools, completion guards, fixed checks, and dynamic-Package accounting. |
+| `dsh-autopilot-skills` | `@liumengxuan04/dsh-autopilot/skills` | Read, validate, and register the packaged skill through DSH's public Skill Service. |
 
 The service depends on DSH's Goal capability. The command plugin also depends on the top-level Agent registry and command registry. The tool plugin uses DSH's tools, system prompt, shell, and Goal capabilities. All registrations follow Cordis lifecycle disposal.
 
@@ -57,7 +57,7 @@ The lease timer is segmented because Node timers cannot represent the full 30-da
 
 ## Iteration and completion
 
-An armed native Goal already gives DSH a durable multi-round loop. Oh My DSH adds a policy section instructing the model to keep working and to use `autopilot_verify` instead of completing the Goal directly.
+An armed native Goal already gives DSH a durable multi-round loop. DSH Autopilot adds a policy section instructing the model to keep working and to use `autopilot_verify` instead of completing the Goal directly.
 
 The tool guard rejects `update_goal` completion while a lease is active. `autopilot_verify` then:
 
@@ -72,9 +72,9 @@ The model chooses neither command strings nor completion semantics. Verification
 
 ## Dynamic Cordis extension
 
-Dynamic Cordis is conditional on Agent composition. The session's DSH Agent preset must contribute `cordis_define` and `cordis_run`; DSH's shipped `cordis` preset is the recommended composition. Oh My DSH neither injects those tools into other presets nor makes an unavailable operation available.
+Dynamic Cordis is conditional on Agent composition. The session's DSH Agent preset must contribute `cordis_define` and `cordis_run`; DSH's shipped `cordis` preset is the recommended composition. DSH Autopilot neither injects those tools into other presets nor makes an unavailable operation available.
 
-When those tools exist, Oh My DSH does not replace them. It installs a monotonic guard around their use during an active lease:
+When those tools exist, DSH Autopilot does not replace them. It installs a monotonic guard around their use during an active lease:
 
 - `off` denies define and run operations;
 - `host-only` rejects a definition containing Client code, counts successful definitions, and records the exact `(pluginId, packageId)` pair in process memory; a later run is allowed only for a receipt from the same Agent and lease;
@@ -90,7 +90,7 @@ This is a cooperative product policy, not isolation. The Cordis VM is an executi
 
 The published artifact contains built ESM entry points, declarations, `cordis.patch.yml`, README, design and security documents, license, and the bundled autonomous-development skill. DSH installs the package into one profile and appends its bundle name to that profile's ordered bundle list. No install script edits DSH or the user's workspace.
 
-The `oh-my-dsh doctor` executable resolves the selected profile with `dsh --dump-config` and checks that all four rows occur once. It is intentionally diagnostic only.
+The `dsh-autopilot doctor` executable resolves the selected profile with `dsh --dump-config` and checks that all four rows occur once. It is intentionally diagnostic only.
 
 ## Deferred capabilities
 

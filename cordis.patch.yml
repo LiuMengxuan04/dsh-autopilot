@@ -1,6 +1,6 @@
 - insert:
-    - id: oh-my-dsh-service
-      name: '@liumengxuan04/oh-my-dsh/service'
+    - id: dsh-autopilot-service
+      name: '@liumengxuan04/dsh-autopilot/service'
       config:
         defaultMaxGoalRounds: 256
         maxGoalRounds: 1024
@@ -10,11 +10,11 @@
         maxDynamicPackages: 8
         selfModification: host-only
 
-    - id: oh-my-dsh-commands
-      name: '@liumengxuan04/oh-my-dsh/commands'
+    - id: dsh-autopilot-commands
+      name: '@liumengxuan04/dsh-autopilot/commands'
 
-    - id: oh-my-dsh-tools
-      name: '@liumengxuan04/oh-my-dsh/tools'
+    - id: dsh-autopilot-tools
+      name: '@liumengxuan04/dsh-autopilot/tools'
       config:
         minimumEvidenceItems: 1
         checks:
@@ -22,5 +22,5 @@
             command: git diff --check
             timeoutMs: 120000
 
-    - id: oh-my-dsh-skills
-      name: '@liumengxuan04/oh-my-dsh/skills'
+    - id: dsh-autopilot-skills
+      name: '@liumengxuan04/dsh-autopilot/skills'

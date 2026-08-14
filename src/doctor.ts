@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Installation diagnostics for a packed Oh My DSH bundle. */
+/** Installation diagnostics for a packed DSH Autopilot bundle. */
 import { spawnSync } from 'node:child_process'
 
 interface DoctorOptions {
@@ -8,10 +8,10 @@ interface DoctorOptions {
 }
 
 const EXPECTED_ROWS = [
-  'oh-my-dsh-service',
-  'oh-my-dsh-commands',
-  'oh-my-dsh-tools',
-  'oh-my-dsh-skills',
+  'dsh-autopilot-service',
+  'dsh-autopilot-commands',
+  'dsh-autopilot-tools',
+  'dsh-autopilot-skills',
 ] as const
 
 /** Return whether the current Node version satisfies the package engine floor. */
@@ -40,7 +40,7 @@ function parseOptions(argv: readonly string[]): DoctorOptions | undefined {
   }
   return {
     profile,
-    executable: process.env['OH_MY_DSH_DSH_BIN']
+    executable: process.env['DSH_AUTOPILOT_DSH_BIN']
       ?? (process.platform === 'win32' ? 'dsh.cmd' : 'dsh'),
   }
 }
@@ -56,11 +56,11 @@ export function runDoctor(argv: readonly string[]): number {
   try {
     options = parseOptions(argv)
   } catch (error: unknown) {
-    process.stderr.write(`oh-my-dsh doctor: ${error instanceof Error ? error.message : String(error)}\n`)
+    process.stderr.write(`dsh-autopilot doctor: ${error instanceof Error ? error.message : String(error)}\n`)
     return 2
   }
   if (options === undefined) {
-    process.stdout.write('Usage: oh-my-dsh doctor [--profile web]\n')
+    process.stdout.write('Usage: dsh-autopilot doctor [--profile web]\n')
     return 0
   }
 
@@ -82,20 +82,20 @@ export function runDoctor(argv: readonly string[]): number {
       const count = rowCount(dumped.stdout, row)
       if (count !== 1) failures.push(`expected Loader row "${row}" exactly once, found ${count}`)
     }
-    if (!dumped.stdout.includes("name: '@liumengxuan04/oh-my-dsh/service'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/oh-my-dsh/commands'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/oh-my-dsh/tools'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/oh-my-dsh/skills'")) {
-      failures.push('one or more Oh My DSH module names are missing from the resolved profile')
+    if (!dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/service'")
+      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/commands'")
+      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/tools'")
+      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/skills'")) {
+      failures.push('one or more DSH Autopilot module names are missing from the resolved profile')
     }
   }
 
   if (failures.length > 0) {
-    process.stderr.write(`Oh My DSH doctor found ${failures.length} problem(s):\n`)
+    process.stderr.write(`DSH Autopilot doctor found ${failures.length} problem(s):\n`)
     for (const failure of failures) process.stderr.write(`- ${failure}\n`)
     return 1
   }
-  process.stdout.write(`Oh My DSH is correctly installed in DSH profile "${options.profile}".\n`)
+  process.stdout.write(`DSH Autopilot is correctly installed in DSH profile "${options.profile}".\n`)
   return 0
 }
 

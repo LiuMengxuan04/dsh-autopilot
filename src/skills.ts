@@ -6,7 +6,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import type { SkillRegistration } from '@deepseek-ai/dsh-skill'
 import { parse as parseYaml } from 'yaml'
 
-export const name = 'oh-my-dsh-skills'
+export const name = 'dsh-autopilot-skills'
 export const inject = ['skills']
 
 const SKILL_FILE_URL = new URL(
@@ -74,7 +74,7 @@ export function parseBundledSkill(raw: string, path: string): SkillRegistration 
     description,
     ...(whenToUse === undefined ? {} : { whenToUse }),
     source: 'bundled',
-    provider: 'oh-my-dsh',
+    provider: 'dsh-autopilot',
     content: body,
     path,
     resourceBase: { kind: 'directory', path: dirname(path) },

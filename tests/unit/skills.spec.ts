@@ -14,7 +14,7 @@ describe('bundled skill registration', () => {
       expect.objectContaining({
         name: 'autonomous-development',
         source: 'bundled',
-        provider: 'oh-my-dsh',
+        provider: 'dsh-autopilot',
         invocation: { modelInvocable: true, userInvocable: true },
         resourceBase: {
           kind: 'directory',
@@ -46,7 +46,7 @@ describe('bundled skill registration', () => {
       description: 'Sample description',
       whenToUse: 'During tests',
       source: 'bundled',
-      provider: 'oh-my-dsh',
+      provider: 'dsh-autopilot',
       content: 'Follow these instructions.',
       path: '/package/assets/sample/SKILL.md',
       resourceBase: { kind: 'directory', path: '/package/assets/sample' },

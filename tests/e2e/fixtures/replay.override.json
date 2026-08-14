@@ -152,7 +152,7 @@
         "index": 0,
         "id": "call_e2e_write",
         "name": "write",
-        "argumentsDelta": "{\"file_path\":\"e2e-proof.txt\",\"content\":\"OH_MY_DSH_E2E\\n\"}"
+        "argumentsDelta": "{\"file_path\":\"e2e-proof.txt\",\"content\":\"DSH_AUTOPILOT_E2E\\n\"}"
       },
       {
         "type": "block-end",
@@ -161,7 +161,7 @@
           "type": "tool-call",
           "id": "call_e2e_write",
           "name": "write",
-          "arguments": "{\"file_path\":\"e2e-proof.txt\",\"content\":\"OH_MY_DSH_E2E\\n\"}"
+          "arguments": "{\"file_path\":\"e2e-proof.txt\",\"content\":\"DSH_AUTOPILOT_E2E\\n\"}"
         }
       },
       { "type": "finish", "reason": { "kind": "tool-calls" } }
@@ -196,7 +196,7 @@
         "index": 0,
         "id": "call_e2e_verify",
         "name": "autopilot_verify",
-        "argumentsDelta": "{\"summary\":\"The requested proof artifact exists with exact content.\",\"evidence\":[\"e2e-proof.txt contains OH_MY_DSH_E2E\"]}"
+        "argumentsDelta": "{\"summary\":\"The requested proof artifact exists with exact content.\",\"evidence\":[\"e2e-proof.txt contains DSH_AUTOPILOT_E2E\"]}"
       },
       {
         "type": "block-end",
@@ -205,7 +205,7 @@
           "type": "tool-call",
           "id": "call_e2e_verify",
           "name": "autopilot_verify",
-          "arguments": "{\"summary\":\"The requested proof artifact exists with exact content.\",\"evidence\":[\"e2e-proof.txt contains OH_MY_DSH_E2E\"]}"
+          "arguments": "{\"summary\":\"The requested proof artifact exists with exact content.\",\"evidence\":[\"e2e-proof.txt contains DSH_AUTOPILOT_E2E\"]}"
         }
       },
       { "type": "finish", "reason": { "kind": "tool-calls" } }

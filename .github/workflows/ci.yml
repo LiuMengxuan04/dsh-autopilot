@@ -27,12 +27,12 @@ jobs:
         node: ['22.19.0', '24.x']
     defaults:
       run:
-        working-directory: oh-my-dsh
+        working-directory: dsh-autopilot
     steps:
-      - name: Check out Oh My DSH
+      - name: Check out DSH Autopilot
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          path: oh-my-dsh
+          path: dsh-autopilot
 
       - name: Check out pinned DSH
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -53,7 +53,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: |
             harness/pnpm-lock.yaml
-            oh-my-dsh/pnpm-lock.yaml
+            dsh-autopilot/pnpm-lock.yaml
 
       - name: Install DSH dependencies
         run: pnpm install --frozen-lockfile
@@ -85,12 +85,12 @@ jobs:
     timeout-minutes: 60
     defaults:
       run:
-        working-directory: oh-my-dsh
+        working-directory: dsh-autopilot
     steps:
-      - name: Check out Oh My DSH
+      - name: Check out DSH Autopilot
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
-          path: oh-my-dsh
+          path: dsh-autopilot
 
       - name: Check out pinned DSH
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -111,7 +111,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: |
             harness/pnpm-lock.yaml
-            oh-my-dsh/pnpm-lock.yaml
+            dsh-autopilot/pnpm-lock.yaml
 
       - name: Install DSH dependencies
         run: pnpm install --frozen-lockfile
@@ -149,6 +149,7 @@ jobs:
           printf '%s\n' "$entries" | grep -Eq '^package/lib/skills.js$'
           printf '%s\n' "$entries" | grep -Eq '^package/assets/skills/autonomous-development/SKILL.md$'
           printf '%s\n' "$entries" | grep -Eq '^package/README.md$'
+          printf '%s\n' "$entries" | grep -Eq '^package/README.zh-CN.md$'
           printf '%s\n' "$entries" | grep -Eq '^package/docs/autonomy-and-security.md$'
           if printf '%s\n' "$entries" | grep -Eq '^package/(src|tests)/|\.map$'; then
             echo 'tarball contains source, tests, or source maps' >&2
@@ -158,4 +159,4 @@ jobs:
       - name: Run packed browser E2E
         run: pnpm run test:e2e
         env:
-          OH_MY_DSH_E2E_BROWSER_CHANNEL: msedge
+          DSH_AUTOPILOT_E2E_BROWSER_CHANNEL: msedge

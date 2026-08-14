@@ -64,7 +64,7 @@ export function shellResult(overrides: Partial<ShellRunResult> = {}): ShellRunRe
 }
 
 /** Create a registry-compatible top-level Agent. */
-export function createTestAgent(rawId = `oh-my-dsh-${Math.random()}`, cwd?: string): Agent {
+export function createTestAgent(rawId = `dsh-autopilot-${Math.random()}`, cwd?: string): Agent {
   const id = SessionId(rawId)
   const base = Session.create(id)
   const session = cwd === undefined

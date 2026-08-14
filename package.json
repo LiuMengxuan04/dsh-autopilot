@@ -1,7 +1,14 @@
 {
-  "name": "@liumengxuan04/oh-my-dsh",
+  "name": "@liumengxuan04/dsh-autopilot",
   "version": "0.1.0-alpha.1",
   "description": "Bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "cordis",
+    "autonomous-agents",
+    "developer-tools"
+  ],
   "license": "MIT",
   "type": "module",
   "engines": {
@@ -35,7 +42,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "oh-my-dsh": "./lib/doctor.js"
+    "dsh-autopilot": "./lib/doctor.js"
   },
   "files": [
     "lib/**/*.js",
@@ -44,6 +51,7 @@
     "assets/skills/**",
     "docs/**/*.md",
     "README.md",
+    "README.zh-CN.md",
     "LICENSE"
   ],
   "publishConfig": {
@@ -51,7 +59,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiuMengxuan04/oh-my-dsh.git"
+    "url": "git+https://github.com/LiuMengxuan04/dsh-autopilot.git"
+  },
+  "homepage": "https://github.com/LiuMengxuan04/dsh-autopilot#readme",
+  "bugs": {
+    "url": "https://github.com/LiuMengxuan04/dsh-autopilot/issues"
   },
   "dsh": {
     "bundle": {
