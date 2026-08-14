@@ -124,8 +124,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Install Microsoft Edge
-        run: pnpm exec playwright install --with-deps msedge
+      - name: Verify system Microsoft Edge
+        run: microsoft-edge --version
 
       - name: Prepare DSH bubblewrap sandbox
         run: bash ../harness/scripts/prepare-ci-bubblewrap.sh
