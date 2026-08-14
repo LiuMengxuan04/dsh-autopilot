@@ -4,3 +4,6 @@ coverage/
 .artifacts/
 *.tgz
 .DS_Store
+.env
+.env.*
+!.env.example

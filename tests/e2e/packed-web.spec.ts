@@ -221,11 +221,11 @@ describe('packed bundle in a real DSH Web profile', () => {
       expect(dumped.match(new RegExp(`(?:^|\\n)\\s*(?:- )?id: ${id}(?:\\n|$)`, 'gu'))).toHaveLength(1)
     }
 
-    const doctor = execFileSync(process.execPath, [join(REPO_ROOT, 'lib/doctor.js'), '--profile', 'web'], {
-      cwd: workspace,
-      env: { ...profileEnv, OH_MY_DSH_DSH_BIN: DSH_BIN },
-      encoding: 'utf8',
-    })
+    const doctor = dsh(
+      ['plugin', '--profile', 'web', 'exec', 'oh-my-dsh', 'doctor', '--profile', 'web'],
+      { ...profileEnv, OH_MY_DSH_DSH_BIN: DSH_BIN },
+      workspace,
+    )
     expect(doctor).toContain('correctly installed')
 
     const verifierScript = [

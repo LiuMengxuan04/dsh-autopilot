@@ -437,6 +437,28 @@ describe('autonomy tool guards and dynamic Cordis accounting', () => {
     await ctx.fiber.dispose()
   })
 
+  it.each([
+    ['missing', undefined],
+    ['null', null],
+    ['string', 'false'],
+    ['client', true],
+  ] as const)('fails closed when a definition reports hasClientHalf as %s', async (suffix, value) => {
+    const { ctx, agent } = await createHarness()
+    const pluginId = `malformed-${suffix}`
+    registerTool(ctx, 'cordis_define', () => ({
+      pluginId,
+      packageId: 'pkg',
+      ...(value === undefined ? {} : { hasClientHalf: value }),
+    }))
+    registerTool(ctx, 'cordis_run')
+    startGoal(ctx, agent)
+
+    expect((await executeTool(ctx, agent, 'cordis_define', { code: { host: 'x' } })).isError).toBe(false)
+    expect(await executeTool(ctx, agent, 'cordis_run', { pluginId, packageId: 'pkg' }))
+      .toMatchObject({ isError: true, error: { message: expect.stringContaining('during this lease') } })
+    await ctx.fiber.dispose()
+  })
+
   it('binds Host Package receipts to one lease and refuses reuse after reauthorization', async () => {
     const { ctx, agent } = await createHarness()
     registerTool(ctx, 'cordis_define', () => ({

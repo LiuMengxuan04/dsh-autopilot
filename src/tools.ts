@@ -311,7 +311,7 @@ export function apply(ctx: Context, config: Config): void {
     if (typeof pluginId !== 'string' || typeof packageId !== 'string') return
     try {
       ctx.autonomy.recordDynamicPackage(exec.agent)
-      if (hasClientHalf !== true) {
+      if (hasClientHalf === false) {
         const packages = hostPackages.get(exec.agent) ?? new Map<string, string>()
         packages.set(packageKey(pluginId, packageId), lease.id)
         hostPackages.set(exec.agent, packages)
