@@ -120,7 +120,7 @@ async function stopWeb(handle: ProcessHandle): Promise<void> {
   }
 }
 
-/** Poll history until the complete two-round Cordis and verifier run is durable. */
+/** Poll history until the complete two-round run and its user-facing handoff are durable. */
 async function waitForCompletion(baseUrl: string, sessionId: string, output: { text: string }): Promise<RpcHistory> {
   const deadline = Date.now() + 90_000
   let latest: RpcHistory | undefined
@@ -132,10 +132,10 @@ async function waitForCompletion(baseUrl: string, sessionId: string, output: { t
       && (event.data as { operation?: unknown }).operation === 'complete')
     const turns = events.filter(event => event.type === 'turn/end').length
     const steps = events.filter(event => event.type === 'step/start').length
-    if (complete && turns >= 2 && steps >= 9) return latest
+    if (complete && turns >= 2 && steps >= 10) return latest
     await new Promise(resolve => setTimeout(resolve, 200))
   }
-  throw new Error(`Autopilot did not finish two rounds and nine steps:\n${JSON.stringify(latest, null, 2)}\n${output.text}`)
+  throw new Error(`Autopilot did not finish two rounds and ten steps:\n${JSON.stringify(latest, null, 2)}\n${output.text}`)
 }
 
 /** Extract the model-facing text returned by one tool result event. */
@@ -146,6 +146,15 @@ function toolResultText(event: RpcHistory['events'][number]['event']): string | 
   }).message?.content
   return content?.flatMap(block => block.content ?? [])
     .find(block => block.type === 'text')?.text
+}
+
+/** Extract ordinary text from one durable assistant message. */
+function assistantText(event: RpcHistory['events'][number]['event']): string | undefined {
+  if (event.type !== 'assistant/message' || typeof event.data !== 'object' || event.data === null) return undefined
+  const content = (event.data as {
+    message?: { content?: Array<{ type?: string; text?: string }> }
+  }).message?.content
+  return content?.find(block => block.type === 'text')?.text
 }
 
 /** Return every file below one temporary persistence root. */
@@ -272,7 +281,7 @@ describe('packed bundle in a real DSH Web profile', () => {
     const history = await waitForCompletion(baseUrl, sessionId, handle.output)
     const events = history.events.map(item => item.event)
     expect(readFileSync(join(workspace, 'e2e-proof.txt'), 'utf8')).toBe('DSH_AUTOPILOT_E2E\n')
-    expect(events.filter(event => event.type === 'step/start')).toHaveLength(9)
+    expect(events.filter(event => event.type === 'step/start')).toHaveLength(10)
     expect(events.filter(event => event.type === 'turn/end')).toHaveLength(2)
     expect(events.flatMap(event => event.type === 'tool/call'
       ? [(event.data as { name: string }).name]
@@ -323,8 +332,12 @@ describe('packed bundle in a real DSH Web profile', () => {
       && (event.data as { operation?: unknown }).operation === 'complete')
     const verifyResult = events.find(event => event.type === 'tool/result'
       && toolResultText(event)?.includes('"verdict": "pass"'))
+    const finalReply = events.find(event => event.type === 'assistant/message'
+      && assistantText(event)?.startsWith('Autopilot completed successfully.'))
     expect(verifyCall!.seq).toBeLessThan(complete!.seq)
     expect(complete!.seq).toBeLessThan(verifyResult!.seq)
+    expect(verifyResult!.seq).toBeLessThan(finalReply!.seq)
+    expect(assistantText(finalReply!)).toContain('deployment-fixed verification passed')
 
     await stopWeb(handle)
     activeProcess = undefined

@@ -39,6 +39,7 @@ The default lease supports work measured in days rather than hours: 256 Goal rou
 | Human authorization | `/autopilot start`, `status`, `pause`, `resume`, and `stop` commands on a top-level Agent. The model cannot grant or extend its own lease. |
 | Long-running Goal control | A bounded, process-local autonomy lease around DSH's native durable Goal and Goal Round Driver. |
 | Verifier-owned completion | `autopilot_verify` runs deployment-fixed commands. Direct model completion is guarded while a lease is active. |
+| Verified final handoff | A passing verifier schedules one final model response that summarizes the outcome, checks, and artifacts for the user. |
 | Repair rounds | A failed verifier rearms the same Goal with inspectable results so the next round can repair the failure. |
 | Resource limits | Active duration, Goal rounds, verification attempts, and successful dynamic Package definitions are bounded independently. |
 | Dynamic Cordis policy | `off`, `host-only`, and `client-approved` modes guard DSH's existing `cordis_define` and `cordis_run` tools. |
@@ -67,6 +68,7 @@ flowchart LR
     D -->|"checks fail"| E["Repair round"]
     E --> C
     D -->|"all checks pass"| F["Goal completed"]
+    F --> H["Final user-facing handoff"]
     B -->|"pause, expiry, or shutdown"| G["Goal disarmed"]
     G -->|"human resume"| B
 ```
@@ -96,7 +98,7 @@ dsh plugin --profile web exec dsh-autopilot doctor --profile web
 To pin this release exactly:
 
 ```sh
-dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.1
+dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.2
 ```
 
 ### Install a GitHub Release artifact
@@ -105,13 +107,13 @@ Download the `.tgz` attached to the release, then install that exact artifact in
 
 ```sh
 mkdir -p .artifacts
-gh release download v0.1.0-alpha.1 \
+gh release download v0.1.0-alpha.2 \
   --repo LiuMengxuan04/dsh-autopilot \
   --pattern 'dsh-autopilot-*.tgz' \
   --dir .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.2.tgz
 dsh --profile web --dump-config
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
@@ -125,7 +127,7 @@ pnpm install --frozen-lockfile
 pnpm pack --pack-destination .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.2.tgz
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
@@ -202,7 +204,7 @@ Supported duration units are `ms`, `s`, `m`, `h`, `d`, and `w`. A request may lo
 - `resume` rearms the Goal. After a process restart, it creates a new human-authorized lease.
 - `stop` revokes the lease and pauses the native Goal without deleting DSH session history.
 
-The model uses `get_autopilot` to inspect the same budgets. When it believes the objective is ready, it calls `autopilot_verify` with a summary and evidence list. The model cannot choose the verifier commands. A failed check returns a repair round; all configured checks must pass before the plugin completes the native Goal.
+The model uses `get_autopilot` to inspect the same budgets. `/autopilot start` has already created the native Goal, so `create_goal` is hidden from that Agent while the Goal remains non-terminal. When the model believes the objective is ready, it calls `autopilot_verify` with a summary and evidence list. The model cannot choose the verifier commands. A failed check returns a repair round; all configured checks must pass before the plugin completes the native Goal and asks the model for one final user-facing handoff.
 
 ## Dynamic Cordis self-extension
 

@@ -11,6 +11,8 @@ Complete one inspectable workspace objective through the active DSH Goal. Treat 
 
 Call `get_autopilot` before starting work.
 
+When `/autopilot start` invokes this skill, the human command has already created and armed the current Goal and lease. Never call `create_goal` from an Autopilot run. Read the existing Goal with `get_autopilot` and work against its exact objective.
+
 If no active lease exists, state the exact command the human should run, for example:
 
 ```text
@@ -38,6 +40,33 @@ Do not stop merely because one model turn ends. Do stop for a missing human deci
 Prefer installed DSH capabilities. Dynamic Cordis requires the current DSH Agent preset to provide `cordis_define` and `cordis_run`; recommend the shipped `cordis` preset when the user needs this capability. Do not imply that DSH Autopilot adds those tools to another preset.
 
 Define a dynamic Cordis Package only when it materially enables the current Goal and the active lease permits it.
+
+For a Host Package that contributes a model tool, use the current DSH runtime form below. `execute` is a sibling of `output`; `output` must declare `schema` and `render`. Register through an effect so unload removes the tool.
+
+```js
+return {
+  name: 'host-helper',
+  inject: ['tools'],
+  apply(ctx) {
+    ctx.effect(() => harness.registerTool(ctx, harness.defineTool({
+      name: 'host_helper',
+      description: 'Perform one narrow operation for the active Goal.',
+      parameters: {},
+      output: {
+        schema: { type: 'string' },
+        render(_args, value) {
+          return [{ type: 'text', text: value }]
+        },
+      },
+      async execute() {
+        return 'result'
+      },
+    })))
+  },
+}
+```
+
+Keep the output schema aligned with the value returned by `execute`. Do not replace the `output` declaration with a bare schema or place `execute` inside `output`.
 
 Under `host-only`, omit Client code and activate only the exact Package successfully defined in this lease. No additional DSH Autopilot approval is required for that eligible Host-only path, but it grants no additional authority. Treat the Cordis VM as an execution mechanism, not a sandbox. Do not use self-extension to widen filesystem, shell, network, credential, approval, or deployment permissions.
 

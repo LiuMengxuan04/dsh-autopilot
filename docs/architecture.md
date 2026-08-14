@@ -57,7 +57,7 @@ The lease timer is segmented because Node timers cannot represent the full 30-da
 
 ## Iteration and completion
 
-An armed native Goal already gives DSH a durable multi-round loop. DSH Autopilot adds a policy section instructing the model to keep working and to use `autopilot_verify` instead of completing the Goal directly.
+An armed native Goal already gives DSH a durable multi-round loop. DSH Autopilot hides `create_goal` from that Agent while its current Goal is non-terminal and adds a policy section instructing the model to keep working and to use `autopilot_verify` instead of completing the Goal directly.
 
 The tool guard rejects `update_goal` completion while a lease is active. `autopilot_verify` then:
 
@@ -65,7 +65,7 @@ The tool guard rejects `update_goal` completion while a lease is active. `autopi
 2. moves the lease to `verifying` and disarms the Goal;
 3. runs every deployment-fixed shell check in the Agent workspace with the tool and lease cancellation signals;
 4. bounds retained stdout and stderr for each result;
-5. rearms the same Goal and ends the turn after a failed check, or atomically completes the Goal and lease after all checks pass;
+5. rearms the same Goal and ends the turn after a failed check, or atomically completes the Goal and lease after all checks pass and defers a final user-facing handoff instruction;
 6. blocks the Goal and pauses the lease when verifier infrastructure fails or the attempt budget is exhausted.
 
 The model chooses neither command strings nor completion semantics. Verification commands come from the resolved Cordis configuration.

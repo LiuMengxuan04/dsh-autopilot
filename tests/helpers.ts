@@ -5,6 +5,7 @@ import CommandRuntime from '@deepseek-ai/dsh-commands'
 import GoalService from '@deepseek-ai/dsh-goal'
 import type { ShellExecRequest, ShellExecSpec, ShellProcess, ShellRunResult } from '@deepseek-ai/dsh-shell'
 import ShellExecutor from '@deepseek-ai/dsh-shell'
+import { createScope } from '@deepseek-ai/dsh-scope'
 import { Session, SessionId } from '@deepseek-ai/dsh-session'
 import SystemPrompt from '@deepseek-ai/dsh-system-prompt'
 import ToolRuntime from '@deepseek-ai/dsh-tools'
@@ -102,10 +103,14 @@ export async function createHarness(options: {
   await ctx.plugin(TestShell)
   const autonomyFiber = await ctx.plugin(AutonomyService, options.autonomy ?? {})
   await ctx.plugin(commandsPlugin)
-  await ctx.plugin(toolsPlugin, options.tools ?? {
+  const toolsFiber = await ctx.plugin(toolsPlugin, options.tools ?? {
     checks: [{ name: 'quality', command: 'pnpm test', timeoutMs: 5000 }],
   })
   const agent = createTestAgent()
+  await ctx.plugin(Object.assign((inner: Context) => {
+    const scope = createScope(inner, agent)
+    Object.defineProperty(agent, 'ctx', { value: scope.ctx })
+  }, { inject: ['tools', 'systemPrompt'] }))
   ctx.agents.register(agent)
-  return { ctx, agent, shell: ctx.shell as TestShell, autonomyFiber }
+  return { ctx, agent, shell: ctx.shell as TestShell, autonomyFiber, toolsFiber }
 }

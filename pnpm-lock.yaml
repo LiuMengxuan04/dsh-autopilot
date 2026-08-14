@@ -39,6 +39,9 @@ importers:
       '@deepseek-ai/dsh-llm-replay':
         specifier: link:../harness/packages/test-support/llm-replay
         version: link:../harness/packages/test-support/llm-replay
+      '@deepseek-ai/dsh-scope':
+        specifier: link:../harness/packages/core/scope
+        version: link:../harness/packages/core/scope
       '@deepseek-ai/dsh-session':
         specifier: link:../harness/packages/core/session
         version: link:../harness/packages/core/session

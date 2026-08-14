@@ -54,6 +54,16 @@ function startGoal(ctx: Context, agent: Agent): void {
   ctx.autonomy.start(agent, { goalId: goal.id })
 }
 
+/** Run the policy portion of one proposed Agent step. */
+function enterStep(ctx: Context, agent: Agent, step = 0) {
+  return agentEvents(ctx, agent).waterfall('agent/pre-step', {
+    messages: [],
+    turn: 1,
+    step,
+    signal: new AbortController().signal,
+  }, () => Promise.resolve({ kind: 'enter' as const, messages: [] }))
+}
+
 describe('model-facing autonomy context', () => {
   it('exposes status and logs only active policy text into prompt assembly', async () => {
     const { ctx, agent } = await createHarness()
@@ -76,6 +86,8 @@ describe('model-facing autonomy context', () => {
     const active = await ctx.systemPrompt.assemble(assembleContextFor(agent))
     expect(active.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text)
       .toContain('Dynamic Cordis policy: host-only')
+    expect(active.contexts.find(item => item.name === 'dsh-autopilot:autopilot')?.text)
+      .toContain('do not call create_goal')
     const status = await executeTool(ctx, agent, 'get_autopilot')
     expect(status).toMatchObject({
       isError: false,
@@ -107,6 +119,17 @@ describe('model-facing autonomy context', () => {
     expect(result).toMatchObject({ isError: true, error: { message: expect.stringContaining('Agent-backed') } })
     await ctx.fiber.dispose()
   })
+
+  it('lifts the Goal-creation visibility restriction when the plugin unloads', async () => {
+    const { ctx, agent, toolsFiber } = await createHarness()
+    registerTool(ctx, 'create_goal')
+    startGoal(ctx, agent)
+    await enterStep(ctx, agent)
+    expect(ctx.tools.schemas(agent).map(tool => tool.name)).not.toContain('create_goal')
+    await toolsFiber.dispose()
+    expect(ctx.tools.schemas(agent).map(tool => tool.name)).toContain('create_goal')
+    await ctx.fiber.dispose()
+  })
 })
 
 describe('independent completion verifier', () => {
@@ -119,7 +142,13 @@ describe('independent completion verifier', () => {
         ],
       },
     })
+    await enterStep(ctx, agent)
     startGoal(ctx, agent)
+    await enterStep(ctx, agent, 1)
+    registerTool(ctx, 'create_goal')
+    await enterStep(ctx, agent, 2)
+    expect(ctx.tools.schemas(agent).map(tool => tool.name)).not.toContain('create_goal')
+    await enterStep(ctx, agent, 3)
     shell.outcomes.push(
       shellResult({ stdout: { text: 'tests passed', truncated: false } }),
       shellResult({ stdout: { text: 'types passed', truncated: false } }),
@@ -130,12 +159,25 @@ describe('independent completion verifier', () => {
     })
     expect(result).toMatchObject({
       isError: false,
-      concludesTurn: true,
       value: { verdict: 'pass', checks: [{ passed: true }, { passed: true }], goal: { phase: 'complete' } },
     })
+    expect(result.concludesTurn).toBeUndefined()
+    expect(result.additionalContexts).toMatchObject([{
+      source: {
+        kind: 'plugin',
+        plugin: 'dsh-autopilot',
+        form: 'notice',
+        summary: 'verified: ship verified work',
+      },
+      content: [{ type: 'text', text: expect.stringContaining('<autopilot_complete>') }],
+    }])
+    expect((result.additionalContexts?.[0]?.content[0] as { text?: string } | undefined)?.text)
+      .toContain('Write the final message to the user now')
     expect(shell.requests.map(request => request.command)).toEqual(['pnpm test', 'pnpm typecheck'])
     expect(ctx.goals.get(agent)).toMatchObject({ phase: 'complete', activation: 'disarmed' })
     expect(ctx.autonomy.get(agent)?.phase).toBe('completed')
+    await enterStep(ctx, agent, 4)
+    expect(ctx.tools.schemas(agent).map(tool => tool.name)).toContain('create_goal')
     await ctx.fiber.dispose()
   })
 

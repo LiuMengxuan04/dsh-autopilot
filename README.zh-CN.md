@@ -39,6 +39,7 @@ DSH Autopilot 增加了这一层控制：
 | 人类授权 | 为顶层 Agent 提供 `/autopilot start`、`status`、`pause`、`resume` 和 `stop`。模型不能自行授予或延长租约。 |
 | 长时 Goal 控制 | 在 DSH 原生持久 Goal 和 Goal Round Driver 外增加有预算的进程内自治租约。 |
 | 验证器所有的完成权 | `autopilot_verify` 执行部署方固定的命令。租约活跃时，模型不能直接宣告 Goal 完成。 |
+| 验证后的最终反馈 | 验证通过后安排最后一次模型回复，向用户汇总结果、检查和产物。 |
 | 自动修复轮次 | 验证失败后重新激活同一个 Goal，并把可检查的结果交给下一轮修复。 |
 | 独立资源预算 | 分别限制活跃时长、Goal 轮次、验证次数和成功定义的动态 Package 数量。 |
 | 动态 Cordis 策略 | 用 `off`、`host-only` 和 `client-approved` 三种模式约束 DSH 已有的 `cordis_define` 与 `cordis_run`。 |
@@ -67,6 +68,7 @@ flowchart LR
     D -->|"检查失败"| E["修复轮次"]
     E --> C
     D -->|"全部通过"| F["完成 Goal"]
+    F --> H["向用户输出最终反馈"]
     B -->|"暂停、到期或进程关闭"| G["Goal 解除激活"]
     G -->|"人类 resume"| B
 ```
@@ -96,7 +98,7 @@ dsh plugin --profile web exec dsh-autopilot doctor --profile web
 如需精确锁定当前版本：
 
 ```sh
-dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.1
+dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.2
 ```
 
 ### 安装 GitHub Release 产物
@@ -105,13 +107,13 @@ dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.1
 
 ```sh
 mkdir -p .artifacts
-gh release download v0.1.0-alpha.1 \
+gh release download v0.1.0-alpha.2 \
   --repo LiuMengxuan04/dsh-autopilot \
   --pattern 'dsh-autopilot-*.tgz' \
   --dir .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.2.tgz
 dsh --profile web --dump-config
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
@@ -125,7 +127,7 @@ pnpm install --frozen-lockfile
 pnpm pack --pack-destination .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.2.tgz
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
@@ -202,7 +204,7 @@ DSH Autopilot 不会把这些工具注入 `standard`、`code` 或其他 preset�
 - `resume` 重新激活 Goal。进程重启后，它会建立一份新的人类授权租约。
 - `stop` 撤销租约并暂停原生 Goal，但不会删除 DSH session 历史。
 
-模型使用 `get_autopilot` 查看同样的预算。它认为目标已准备完成时，会调用 `autopilot_verify` 并提交摘要与证据列表。模型不能选择验证命令。检查失败会进入修复轮次；只有全部配置检查通过后，插件才会完成原生 Goal。
+模型使用 `get_autopilot` 查看同样的预算。`/autopilot start` 已经创建了原生 Goal，因此在该 Goal 仍未终结时，插件会对这个 Agent 隐藏 `create_goal`。模型认为目标已准备完成时，会调用 `autopilot_verify` 并提交摘要与证据列表。模型不能选择验证命令。检查失败会进入修复轮次；只有全部配置检查通过后，插件才会完成原生 Goal，并让模型再输出一次面向用户的最终反馈。
 
 ## 动态 Cordis 自扩展
 

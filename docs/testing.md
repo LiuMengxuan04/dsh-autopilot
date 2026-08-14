@@ -36,8 +36,9 @@ The E2E test deliberately avoids a source-only composition:
 8. replay a Host-only `cordis_define` and `cordis_run`, invoke the dynamically registered proof tool, confirm the Package budget, then stop and undefine the Plugin;
 9. write the proof artifact, finish the first Goal round, and call `autopilot_verify` in the second round;
 10. run a deployment-fixed verifier command against the artifact;
-11. assert two turns, nine model steps, exact tool order, no tool failure, dynamic tool output, Goal completion ordering, and persisted JSONL state;
-12. terminate Web and remove the temporary tree.
+11. produce a final model response after the passing verifier result;
+12. assert two turns, ten model steps, exact tool order, no tool failure, dynamic tool output, Goal completion and handoff ordering, and persisted JSONL state;
+13. terminate Web and remove the temporary tree.
 
 The replay fixture requires no model API key and performs no network model request. `DSH_AUTOPILOT_E2E_PRESERVE=1 pnpm run test:e2e` preserves the temporary tree and failure screenshot for diagnosis.
 

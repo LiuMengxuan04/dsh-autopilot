@@ -2,6 +2,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { GoalView } from '@deepseek-ai/dsh-goal'
+import { boundContextSummary, createUserMessage } from '@deepseek-ai/dsh-llm'
 import type { JsonValue } from '@deepseek-ai/dsh-session'
 import type { ShellRunResult } from '@deepseek-ai/dsh-shell'
 import { defineTool } from '@deepseek-ai/dsh-tools'
@@ -109,6 +110,29 @@ function outputPreview(text: string, maxChars: number): { text: string; truncate
 /** Render any canonical JSON tool value. */
 function renderJson(_args: unknown, value: unknown): Array<{ type: 'text'; text: string }> {
   return [{ type: 'text', text: JSON.stringify(value, null, 2) }]
+}
+
+/** Build the final model instruction after independent verification succeeds. */
+function completionContext(objective: string) {
+  return createUserMessage({
+    content: [{
+      type: 'text' as const,
+      text: '<autopilot_complete>\n'
+        + `Objective: ${JSON.stringify(objective)}\n`
+        + 'Independent verification passed and Autopilot has completed the Goal. Write the final '
+        + 'message to the user now: state the outcome, summarize what changed, name the checks that '
+        + 'actually passed, and point to concrete files or other artifacts. Mention any useful next '
+        + 'step. Use only evidence already present in this session. Do not call more tools; further '
+        + "work waits for the user's next instruction.\n"
+        + '</autopilot_complete>',
+    }],
+    source: {
+      kind: 'plugin' as const,
+      plugin: 'dsh-autopilot',
+      form: 'notice' as const,
+      summary: boundContextSummary(`verified: ${objective}`),
+    },
+  })
 }
 
 /** Build a JSON-safe status snapshot. */
@@ -249,6 +273,20 @@ export function apply(ctx: Context, config: Config): void {
   const resolved = resolveConfig(config)
   const hostPackages = new Map<Agent, Map<string, string>>()
   const pendingDefinitions = new Map<Agent, number>()
+  const goalCreationRestrictions = new Map<Agent, () => void>()
+
+  const reconcileGoalCreation = (agent: Agent): void => {
+    const goal = ctx.goals.get(agent)
+    const current = goalCreationRestrictions.get(agent)
+    if (goal !== undefined && goal.phase !== 'complete') {
+      if (current === undefined && ctx.tools.get('create_goal') !== undefined) {
+        goalCreationRestrictions.set(agent, agent.ctx.tools.restrict({ deny: ['create_goal'] }))
+      }
+      return
+    }
+    current?.()
+    goalCreationRestrictions.delete(agent)
+  }
 
   ctx.systemPrompt.context({
     name: 'dsh-autopilot:autopilot',
@@ -261,6 +299,7 @@ export function apply(ctx: Context, config: Config): void {
         || (lease.phase !== 'running' && lease.phase !== 'verifying')) return ''
       return [
         'Autopilot is authorized for the current Goal.',
+        'The human command already created and armed this Goal; do not call create_goal. Read state with get_autopilot.',
         `Continue until the objective is independently verified; ${lease.remainingActiveMs} ms of active time remains.`,
         `Goal rounds: ${goal.roundsStarted}/${goal.maxGoalRounds}.`,
         `Dynamic Cordis policy: ${lease.selfModification}; Packages: ${lease.dynamicPackages}/${ctx.autonomy.limits.maxDynamicPackages}.`,
@@ -271,6 +310,11 @@ export function apply(ctx: Context, config: Config): void {
   })
 
   ctx.tools.guard(exec => guardExecution(ctx, hostPackages, exec))
+
+  ctx.on('agent/pre-step', ({ agent }, next) => {
+    reconcileGoalCreation(agent)
+    return next()
+  })
 
   ctx.on('tools/execute', async (
     exec: ToolDispatchExecution,
@@ -299,6 +343,12 @@ export function apply(ctx: Context, config: Config): void {
   ctx.on('agent/disposed', ({ agent }) => {
     hostPackages.delete(agent)
     pendingDefinitions.delete(agent)
+    goalCreationRestrictions.get(agent)?.()
+    goalCreationRestrictions.delete(agent)
+  })
+  ctx.effect(() => () => {
+    for (const dispose of goalCreationRestrictions.values()) dispose()
+    goalCreationRestrictions.clear()
   })
   ctx.on('tools/result', (exec: Readonly<ToolExecution>, result: Readonly<ToolExecutionResult>) => {
     if (exec.agent === undefined || exec.name !== 'cordis_define' || result.isError) return
@@ -404,7 +454,7 @@ export function apply(ctx: Context, config: Config): void {
         }
         const completed = ctx.goals.complete(agent, goalRef(current))
         ctx.autonomy.complete(agent)
-        exec.concludeTurn()
+        exec.deferContext(completionContext(completed.objective))
         return {
           verdict: 'pass',
           summary,
