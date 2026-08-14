@@ -1,5 +1,5 @@
 {
-  "name": "@liumengxuan04/dsh-autopilot",
+  "name": "dsh-autopilot",
   "version": "0.1.0-alpha.1",
   "description": "Bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
   "keywords": [
@@ -42,7 +42,7 @@
     "./package.json": "./package.json"
   },
   "bin": {
-    "dsh-autopilot": "./lib/doctor.js"
+    "dsh-autopilot": "lib/doctor.js"
   },
   "files": [
     "lib/**/*.js",
@@ -55,7 +55,8 @@
     "LICENSE"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "tag": "next"
   },
   "repository": {
     "type": "git",

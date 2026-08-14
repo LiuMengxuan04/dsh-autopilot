@@ -4,12 +4,20 @@
 
 Long-running, verifier-gated autonomous development for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
 
-DSH Autopilot turns DSH's native Goal loop, tool policy, shell execution, Skill service, and dynamic Cordis tools into one bounded autonomous workflow. A human grants an explicit lease, the model can work across many Goal rounds, deployment-owned checks decide completion, and optional Host-only Cordis Packages can fill capability gaps without modifying the DSH repository.
+**Give DSH a goal, a budget, and a finish line.** Start Autopilot once and let the model implement, inspect, test, repair, and verify across as many bounded Goal rounds as the task needs.
+
+- **Run for days, not hours.** Active-time leases default to seven days and can be deployed with ceilings up to 30 days.
+- **Prove completion.** The model cannot mark its own work complete while Autopilot is active; deployment-owned commands decide.
+- **Repair instead of stopping.** Failed verification returns concrete results to the next Goal round.
+- **Create missing runtime tools.** Optional Host-only Cordis extension lets the model define a temporary capability inside the current lease.
+- **Stay native to DSH.** No fork, no `agent-loop` patch, no hidden Goal database, and no silent permission elevation.
+
+Inspired by [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) and [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent) (formerly `oh-my-opencode`), DSH Autopilot rebuilds the long-running agent experience around DSH's native Goal, Cordis, tool-policy, and session primitives.
 
 > [!IMPORTANT]
 > DSH Autopilot is an independent, third-party project. It is not a DeepSeek product, a DSH fork, or a way to bypass DSH permissions. Every contribution is installed as an additive Cordis plugin row and can be removed again.
 
-## Why this project exists
+## From one command to verified completion
 
 DSH already provides the important primitives: durable Goals, automatic Goal rounds, workflows and subagents, tool guards, shell execution, session logs, and runtime Cordis Packages. What it does not provide as one product surface is a human-controlled long-running development loop with a fixed completion gate.
 
@@ -77,7 +85,19 @@ DSH is still in release-candidate development, so this project intentionally use
 
 ## Installation
 
-The supported alpha installation path is a prebuilt npm tarball from a GitHub Release or a tarball packed from a local checkout. The canonical package identity is `@liumengxuan04/dsh-autopilot`; do not substitute an unscoped package with a similar name.
+The alpha channel is published to npm under the canonical package name `dsh-autopilot`. Install the current alpha into a DSH profile and verify the resolved bundle:
+
+```sh
+dsh plugin --profile web add dsh-autopilot@next
+dsh --profile web --dump-config
+dsh plugin --profile web exec dsh-autopilot doctor --profile web
+```
+
+To pin this release exactly:
+
+```sh
+dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.1
+```
 
 ### Install a GitHub Release artifact
 
@@ -87,11 +107,11 @@ Download the `.tgz` attached to the release, then install that exact artifact in
 mkdir -p .artifacts
 gh release download v0.1.0-alpha.1 \
   --repo LiuMengxuan04/dsh-autopilot \
-  --pattern 'liumengxuan04-dsh-autopilot-*.tgz' \
+  --pattern 'dsh-autopilot-*.tgz' \
   --dir .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
 dsh --profile web --dump-config
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
@@ -105,17 +125,11 @@ pnpm install --frozen-lockfile
 pnpm pack --pack-destination .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
-Direct installation from `github:` or `git+https:` is not supported. This TypeScript package intentionally has no git-install `prepare` path; use a prebuilt tarball so the installed JavaScript matches the reviewed release artifact.
-
-After the scoped package is published to npm, the equivalent command will be:
-
-```sh
-dsh plugin --profile web add @liumengxuan04/dsh-autopilot@0.1.0-alpha.1
-```
+Direct installation from `github:` or `git+https:` is not supported. This TypeScript package intentionally has no git-install `prepare` path; use npm or a prebuilt tarball so the installed JavaScript matches a reviewed release artifact.
 
 ## Quick start
 
@@ -244,7 +258,7 @@ The deliberate DSH-specific differences are equally important: authorization is 
 Pause or stop a live run, stop the affected DSH process, and remove the bundle:
 
 ```sh
-dsh plugin --profile web remove @liumengxuan04/dsh-autopilot
+dsh plugin --profile web remove dsh-autopilot
 dsh --profile web --dump-config
 ```
 

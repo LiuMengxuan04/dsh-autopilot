@@ -10,10 +10,10 @@ DSH applies bundle patches before profile, home, and command-line overlays. Oper
 
 | Row | Module | Responsibility |
 |---|---|---|
-| `dsh-autopilot-service` | `@liumengxuan04/dsh-autopilot/service` | Validate deployment limits and own process-local autonomy leases. |
-| `dsh-autopilot-commands` | `@liumengxuan04/dsh-autopilot/commands` | Register the human `/autopilot` command and translate it into native Goal and lease operations. |
-| `dsh-autopilot-tools` | `@liumengxuan04/dsh-autopilot/tools` | Add model context, status and verifier tools, completion guards, fixed checks, and dynamic-Package accounting. |
-| `dsh-autopilot-skills` | `@liumengxuan04/dsh-autopilot/skills` | Read, validate, and register the packaged skill through DSH's public Skill Service. |
+| `dsh-autopilot-service` | `dsh-autopilot/service` | Validate deployment limits and own process-local autonomy leases. |
+| `dsh-autopilot-commands` | `dsh-autopilot/commands` | Register the human `/autopilot` command and translate it into native Goal and lease operations. |
+| `dsh-autopilot-tools` | `dsh-autopilot/tools` | Add model context, status and verifier tools, completion guards, fixed checks, and dynamic-Package accounting. |
+| `dsh-autopilot-skills` | `dsh-autopilot/skills` | Read, validate, and register the packaged skill through DSH's public Skill Service. |
 
 The service depends on DSH's Goal capability. The command plugin also depends on the top-level Agent registry and command registry. The tool plugin uses DSH's tools, system prompt, shell, and Goal capabilities. All registrations follow Cordis lifecycle disposal.
 

@@ -4,12 +4,20 @@
 
 面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的长时、受验证器约束的自主开发插件。
 
-DSH Autopilot 将 DSH 原生 Goal 循环、工具策略、Shell 执行、Skill 服务和动态 Cordis 工具组合成一套有明确边界的自治工作流。人类先授予租约，模型随后可以跨多个 Goal 轮次持续工作；只有部署方配置的检查能够判定完成；可选的 Host-only Cordis Package 可以在不修改 DSH 仓库的前提下补充临时能力。
+**给 DSH 一个目标、一份预算和一条明确的完成线。** 只需启动一次 Autopilot，模型就能在有边界的多个 Goal 轮次中持续实现、检查、测试、修复并验证结果。
+
+- **运行数天，而不是数小时。** 活跃时间租约默认 7 天，部署上限可配置到 30 天。
+- **用证据完成任务。** Autopilot 活跃时，模型不能自行宣告完成；只有部署方固定的命令能够通过验收。
+- **失败后继续修复。** 验证失败会把具体结果交给下一轮 Goal，而不是让长任务停在半途。
+- **按需创建运行时工具。** 可选的 Host-only Cordis 扩展允许模型在当前租约内定义临时能力。
+- **保持 DSH 原生。** 不 fork、不修改 `agent-loop`、不建立隐藏 Goal 数据库，也不静默提升权限。
+
+本项目的灵感来自 [oh-my-codex](https://github.com/Yeachan-Heo/oh-my-codex) 与 [oh-my-openagent](https://github.com/code-yeongyu/oh-my-openagent)（原名 `oh-my-opencode`），并围绕 DSH 原生 Goal、Cordis、工具策略和 session 能力重新实现长时 Agent 体验。
 
 > [!IMPORTANT]
 > DSH Autopilot 是独立的第三方项目，不属于 DeepSeek，不是 DSH 的 fork，也不能绕过 DSH 权限。它的所有能力都通过增量式 Cordis 插件行安装，并且可以完整卸载。
 
-## 为什么需要这个项目
+## 从一条命令到经过验证的完成
 
 DSH 已经提供了关键原语：可持久化的 Goal、自动 Goal 轮次、workflow 与 subagent、工具 guard、Shell 执行、session 日志以及运行时 Cordis Package。但是，这些能力尚未被组合成一套由人类授权、能够长时间运行并由固定检查决定完成的产品入口。
 
@@ -77,7 +85,19 @@ DSH 仍处于 RC 开发阶段，因此本项目使用较窄的 peer 版本，并
 
 ## 安装
 
-首个 alpha 支持从 GitHub Release 获取预构建 npm tarball，或者从本地 checkout 打包。规范包名为 `@liumengxuan04/dsh-autopilot`，请勿替换成名称相似的无 scope 包。
+alpha 版本通过 npm 的 `next` 标签发布，规范包名为 `dsh-autopilot`。把当前 alpha 安装到 DSH profile，并检查最终 bundle：
+
+```sh
+dsh plugin --profile web add dsh-autopilot@next
+dsh --profile web --dump-config
+dsh plugin --profile web exec dsh-autopilot doctor --profile web
+```
+
+如需精确锁定当前版本：
+
+```sh
+dsh plugin --profile web add dsh-autopilot@0.1.0-alpha.1
+```
 
 ### 安装 GitHub Release 产物
 
@@ -87,11 +107,11 @@ DSH 仍处于 RC 开发阶段，因此本项目使用较窄的 peer 版本，并
 mkdir -p .artifacts
 gh release download v0.1.0-alpha.1 \
   --repo LiuMengxuan04/dsh-autopilot \
-  --pattern 'liumengxuan04-dsh-autopilot-*.tgz' \
+  --pattern 'dsh-autopilot-*.tgz' \
   --dir .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
 dsh --profile web --dump-config
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
@@ -105,17 +125,11 @@ pnpm install --frozen-lockfile
 pnpm pack --pack-destination .artifacts
 
 dsh plugin --profile web add \
-  ./.artifacts/liumengxuan04-dsh-autopilot-0.1.0-alpha.1.tgz
+  ./.artifacts/dsh-autopilot-0.1.0-alpha.1.tgz
 dsh plugin --profile web exec dsh-autopilot doctor --profile web
 ```
 
-目前不支持通过 `github:` 或 `git+https:` 直接安装源码仓库。这个 TypeScript 包没有用于 git 安装的 `prepare` 路径；使用预构建 tarball 可以确保实际安装的 JavaScript 就是经过审阅的发布产物。
-
-当 scoped 包发布到 npm 后，对应命令为：
-
-```sh
-dsh plugin --profile web add @liumengxuan04/dsh-autopilot@0.1.0-alpha.1
-```
+目前不支持通过 `github:` 或 `git+https:` 直接安装源码仓库。这个 TypeScript 包没有用于 git 安装的 `prepare` 路径；请使用 npm 或预构建 tarball，确保实际安装的 JavaScript 对应经过审阅的发布产物。
 
 ## 快速开始
 
@@ -244,7 +258,7 @@ DSH Autopilot 是独立实现，不是下列项目的 fork，也不表示存在�
 先暂停或停止活跃任务，再停止对应 DSH 进程并移除 bundle：
 
 ```sh
-dsh plugin --profile web remove @liumengxuan04/dsh-autopilot
+dsh plugin --profile web remove dsh-autopilot
 dsh --profile web --dump-config
 ```
 

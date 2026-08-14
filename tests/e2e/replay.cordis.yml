@@ -25,7 +25,7 @@
     compression: none
 
 - id: dsh-autopilot-tools
-  name: '@liumengxuan04/dsh-autopilot/tools'
+  name: 'dsh-autopilot/tools'
   config:
     minimumEvidenceItems: 1
     maxOutputChars: 4000

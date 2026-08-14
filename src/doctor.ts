@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Installation diagnostics for a packed DSH Autopilot bundle. */
 import { spawnSync } from 'node:child_process'
+import { yamlScalarCount } from './doctor-config.ts'
 
 interface DoctorOptions {
   readonly profile: string
@@ -12,6 +13,13 @@ const EXPECTED_ROWS = [
   'dsh-autopilot-commands',
   'dsh-autopilot-tools',
   'dsh-autopilot-skills',
+] as const
+
+const EXPECTED_MODULES = [
+  'dsh-autopilot/service',
+  'dsh-autopilot/commands',
+  'dsh-autopilot/tools',
+  'dsh-autopilot/skills',
 ] as const
 
 /** Return whether the current Node version satisfies the package engine floor. */
@@ -82,11 +90,9 @@ export function runDoctor(argv: readonly string[]): number {
       const count = rowCount(dumped.stdout, row)
       if (count !== 1) failures.push(`expected Loader row "${row}" exactly once, found ${count}`)
     }
-    if (!dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/service'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/commands'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/tools'")
-      || !dumped.stdout.includes("name: '@liumengxuan04/dsh-autopilot/skills'")) {
-      failures.push('one or more DSH Autopilot module names are missing from the resolved profile')
+    for (const moduleName of EXPECTED_MODULES) {
+      const count = yamlScalarCount(dumped.stdout, 'name', moduleName)
+      if (count !== 1) failures.push(`expected module name "${moduleName}" exactly once, found ${count}`)
     }
   }
 
