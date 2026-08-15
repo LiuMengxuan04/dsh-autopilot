@@ -17,8 +17,6 @@
 
 DeepSeek Harness already knows how to keep a Goal moving. Oh My DSH adds the parts that become important when a task lasts longer than one model turn: a persistent task graph, bounded workers, fixed completion checks, recovery, and a final report that is not left to chance.
 
-It stays on top of DSH rather than replacing it. The native Agent loop, Goal lifecycle, permissions, sessions, tools, and Cordis runtime remain in charge.
-
 ## Developer preview
 
 `0.1.0-alpha.3` is a prerelease for developers testing DSH and its plugin system. DSH itself is still under active development. Public APIs, plugin composition, configuration, and stored state may change incompatibly between prerelease versions.
