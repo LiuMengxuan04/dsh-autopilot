@@ -17,7 +17,6 @@
 
 DeepSeek Harness 本身已经能够让 Goal 持续推进。Oh My DSH 补上了长任务更容易缺失的部分：可以跨重启保存的任务图、有界 worker、固定完成检查、恢复流程，以及不会完全交给模型临场发挥的最终汇报。
 
-它运行在 DSH 之上，而不是替换 DSH。原生 Agent loop、Goal 生命周期、权限、session、工具和 Cordis runtime 仍然是执行基础。
 
 ## 开发者预览
 
