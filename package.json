@@ -1,7 +1,7 @@
 {
   "name": "dsh-autopilot",
   "version": "0.1.0-alpha.3",
-  "description": "Bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
+  "description": "Oh My DSH: bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -212,11 +212,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LiuMengxuan04/dsh-autopilot.git"
+    "url": "git+https://github.com/LiuMengxuan04/oh-my-dsh.git"
   },
-  "homepage": "https://github.com/LiuMengxuan04/dsh-autopilot#readme",
+  "homepage": "https://github.com/LiuMengxuan04/oh-my-dsh#readme",
   "bugs": {
-    "url": "https://github.com/LiuMengxuan04/dsh-autopilot/issues"
+    "url": "https://github.com/LiuMengxuan04/oh-my-dsh/issues"
   },
   "dsh": {
     "bundle": {

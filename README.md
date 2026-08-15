@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="./assets/dsh-autopilot-logo.png" width="220" alt="DSH Autopilot logo">
+  <img src="./assets/dsh-autopilot-logo.png" width="220" alt="Oh My DSH logo">
 </p>
 
-<h1 align="center">DSH Autopilot</h1>
+<h1 align="center">Oh My DSH</h1>
 
 <p align="center">A durable control layer for long-running development work in DeepSeek Harness.</p>
+
+<p align="center"><strong>(also known as DSH Autopilot · npm package: <code>dsh-autopilot</code>)</strong></p>
 
 <p align="center">
   <a href="./README.zh-CN.md">简体中文</a> ·
@@ -13,7 +15,7 @@
   <a href="./docs/testing.md">Testing</a>
 </p>
 
-DeepSeek Harness already knows how to keep a Goal moving. DSH Autopilot adds the parts that become important when a task lasts longer than one model turn: a persistent task graph, bounded workers, fixed completion checks, recovery, and a final report that is not left to chance.
+DeepSeek Harness already knows how to keep a Goal moving. Oh My DSH adds the parts that become important when a task lasts longer than one model turn: a persistent task graph, bounded workers, fixed completion checks, recovery, and a final report that is not left to chance.
 
 It stays on top of DSH rather than replacing it. The native Agent loop, Goal lifecycle, permissions, sessions, tools, and Cordis runtime remain in charge.
 
@@ -117,8 +119,8 @@ Read [Autonomy and security](./docs/autonomy-and-security.md) before enabling Ho
 ## Build from source
 
 ```sh
-git clone https://github.com/LiuMengxuan04/dsh-autopilot.git
-cd dsh-autopilot
+git clone https://github.com/LiuMengxuan04/oh-my-dsh.git
+cd oh-my-dsh
 pnpm install --frozen-lockfile
 pnpm run check
 pnpm pack --pack-destination .artifacts
@@ -151,7 +153,7 @@ Removing the package does not erase existing DSH transcripts or Autopilot storag
 
 ## Inspiration
 
-DSH Autopilot is inspired by [oh-my-codex (OMX)](https://github.com/Yeachan-Heo/oh-my-codex), especially its emphasis on clarifying the task before execution, keeping long-running work durable, using specialist review, and making progress visible.
+Oh My DSH is inspired by [oh-my-codex (OMX)](https://github.com/Yeachan-Heo/oh-my-codex), especially its emphasis on clarifying the task before execution, keeping long-running work durable, using specialist review, and making progress visible.
 
 This repository is an independent implementation for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). It is not affiliated with or endorsed by the OMX project. DSH remains the execution platform; Autopilot composes its public Goal, Agent, session, storage, subagent, Skill, and Cordis interfaces.
 

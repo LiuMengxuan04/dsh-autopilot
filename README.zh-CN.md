@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="./assets/dsh-autopilot-logo.png" width="220" alt="DSH Autopilot 标志">
+  <img src="./assets/dsh-autopilot-logo.png" width="220" alt="Oh My DSH 标志">
 </p>
 
-<h1 align="center">DSH Autopilot</h1>
+<h1 align="center">Oh My DSH</h1>
 
 <p align="center">面向 DeepSeek Harness 长时开发任务的持久控制层。</p>
+
+<p align="center"><strong>（别名：DSH Autopilot · npm 注册包：<code>dsh-autopilot</code>）</strong></p>
 
 <p align="center">
   <a href="./README.md">English</a> ·
@@ -13,7 +15,7 @@
   <a href="./docs/testing.md">测试</a>
 </p>
 
-DeepSeek Harness 本身已经能够让 Goal 持续推进。DSH Autopilot 补上了长任务更容易缺失的部分：可以跨重启保存的任务图、有界 worker、固定完成检查、恢复流程，以及不会完全交给模型临场发挥的最终汇报。
+DeepSeek Harness 本身已经能够让 Goal 持续推进。Oh My DSH 补上了长任务更容易缺失的部分：可以跨重启保存的任务图、有界 worker、固定完成检查、恢复流程，以及不会完全交给模型临场发挥的最终汇报。
 
 它运行在 DSH 之上，而不是替换 DSH。原生 Agent loop、Goal 生命周期、权限、session、工具和 Cordis runtime 仍然是执行基础。
 
@@ -117,8 +119,8 @@ Autopilot 命令必须写明操作。单独输入 `/autopilot` 不会自动执�
 ## 从源码构建
 
 ```sh
-git clone https://github.com/LiuMengxuan04/dsh-autopilot.git
-cd dsh-autopilot
+git clone https://github.com/LiuMengxuan04/oh-my-dsh.git
+cd oh-my-dsh
 pnpm install --frozen-lockfile
 pnpm run check
 pnpm pack --pack-destination .artifacts
@@ -151,7 +153,7 @@ dsh --profile web --dump-config
 
 ## 灵感来源
 
-DSH Autopilot 的灵感来自 [oh-my-codex（OMX）](https://github.com/Yeachan-Heo/oh-my-codex)，尤其是先澄清任务再执行、让长时工作保持持久、使用专门角色审查，以及让进度可见这些设计取向。
+Oh My DSH 的灵感来自 [oh-my-codex（OMX）](https://github.com/Yeachan-Heo/oh-my-codex)，尤其是先澄清任务再执行、让长时工作保持持久、使用专门角色审查，以及让进度可见这些设计取向。
 
 本仓库是面向 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 的独立实现，与 OMX 项目没有从属或官方合作关系。DSH 仍是执行平台；Autopilot 组合其公开的 Goal、Agent、session、storage、subagent、Skill 和 Cordis 接口。
 
