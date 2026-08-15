@@ -1,26 +1,16 @@
 #!/usr/bin/env node
-/** Installation diagnostics for a packed DSH Autopilot bundle. */
+/** Installation and operational-readiness diagnostics for a packed DSH Autopilot bundle. */
 import { spawnSync } from 'node:child_process'
-import { yamlScalarCount } from './doctor-config.ts'
+import { realpathSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { inspectResolvedProfile } from './doctor-config.ts'
+import type { DoctorDiagnostic } from './doctor-config.ts'
 
 interface DoctorOptions {
   readonly profile: string
   readonly executable: string
 }
-
-const EXPECTED_ROWS = [
-  'dsh-autopilot-service',
-  'dsh-autopilot-commands',
-  'dsh-autopilot-tools',
-  'dsh-autopilot-skills',
-] as const
-
-const EXPECTED_MODULES = [
-  'dsh-autopilot/service',
-  'dsh-autopilot/commands',
-  'dsh-autopilot/tools',
-  'dsh-autopilot/skills',
-] as const
 
 /** Return whether the current Node version satisfies the package engine floor. */
 function supportedNode(version: string): boolean {
@@ -53,9 +43,8 @@ function parseOptions(argv: readonly string[]): DoctorOptions | undefined {
   }
 }
 
-/** Count a stable Loader row id in dumped YAML. */
-function rowCount(config: string, id: string): number {
-  return config.split('\n').filter(line => line.trim() === `- id: ${id}` || line.trim() === `id: ${id}`).length
+function renderDiagnostic(item: DoctorDiagnostic): string {
+  return `[${item.level.toUpperCase()}] ${item.message}`
 }
 
 /** Run diagnostics and return a process exit code. */
@@ -72,37 +61,41 @@ export function runDoctor(argv: readonly string[]): number {
     return 0
   }
 
-  const failures: string[] = []
-  if (!supportedNode(process.versions.node)) {
-    failures.push(`Node ${process.versions.node} is unsupported; use ^22.19 or >=24`)
-  }
+  const diagnostics: DoctorDiagnostic[] = []
+  diagnostics.push(supportedNode(process.versions.node)
+    ? { level: 'pass', message: `runtime: Node ${process.versions.node} satisfies ^22.19 or >=24` }
+    : { level: 'fail', message: `runtime: Node ${process.versions.node} is unsupported; use ^22.19 or >=24` })
+
   const dumped = spawnSync(
     options.executable,
     ['--profile', options.profile, '--dump-config'],
     { encoding: 'utf8' },
   )
   if (dumped.error !== undefined) {
-    failures.push(`could not execute ${options.executable}: ${dumped.error.message}`)
+    diagnostics.push({ level: 'fail', message: `dump-config: could not execute ${options.executable}: ${dumped.error.message}` })
   } else if (dumped.status !== 0) {
-    failures.push(`dsh --dump-config exited ${String(dumped.status)}: ${dumped.stderr.trim()}`)
+    diagnostics.push({
+      level: 'fail',
+      message: `dump-config: dsh exited ${String(dumped.status)}: ${dumped.stderr.trim()}`,
+    })
   } else {
-    for (const row of EXPECTED_ROWS) {
-      const count = rowCount(dumped.stdout, row)
-      if (count !== 1) failures.push(`expected Loader row "${row}" exactly once, found ${count}`)
-    }
-    for (const moduleName of EXPECTED_MODULES) {
-      const count = yamlScalarCount(dumped.stdout, 'name', moduleName)
-      if (count !== 1) failures.push(`expected module name "${moduleName}" exactly once, found ${count}`)
-    }
+    diagnostics.push(...inspectResolvedProfile(dumped.stdout))
   }
 
-  if (failures.length > 0) {
-    process.stderr.write(`DSH Autopilot doctor found ${failures.length} problem(s):\n`)
-    for (const failure of failures) process.stderr.write(`- ${failure}\n`)
+  const failures = diagnostics.filter(item => item.level === 'fail').length
+  const warnings = diagnostics.filter(item => item.level === 'warn').length
+  const lines = diagnostics.map(renderDiagnostic).join('\n')
+  if (failures > 0) {
+    process.stderr.write(`DSH Autopilot doctor for profile "${options.profile}":\n${lines}\n`)
+    process.stderr.write(`[FAIL] readiness: ${failures} failure(s), ${warnings} warning(s)\n`)
     return 1
   }
-  process.stdout.write(`DSH Autopilot is correctly installed in DSH profile "${options.profile}".\n`)
+  process.stdout.write(`DSH Autopilot doctor for profile "${options.profile}":\n${lines}\n`)
+  process.stdout.write(`[PASS] DSH Autopilot is correctly installed and ready (${warnings} warning(s)).\n`)
   return 0
 }
 
-process.exitCode = runDoctor(process.argv.slice(2))
+if (process.argv[1] !== undefined
+  && realpathSync(resolve(process.argv[1])) === realpathSync(fileURLToPath(import.meta.url))) {
+  process.exitCode = runDoctor(process.argv.slice(2))
+}

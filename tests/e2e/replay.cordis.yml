@@ -24,15 +24,24 @@
     root: !!js process.env.DSH_AUTOPILOT_E2E_SESSIONS
     compression: none
 
+- id: dsh-autopilot-service
+  name: 'dsh-autopilot/service'
+  config:
+    selfModification: host-only
+
 - id: dsh-autopilot-tools
   name: 'dsh-autopilot/tools'
   config:
     minimumEvidenceItems: 1
     maxOutputChars: 4000
+    autoDiscoverChecks: false
     checks:
       - name: e2e-artifact
         command: !!js process.env.DSH_AUTOPILOT_E2E_VERIFY
         timeoutMs: 30000
+    reviewers:
+      - role: acceptance-reviewer
+        description: Independently compare the final evidence with every durable acceptance criterion.
 
 - insert:
     - id: dsh-autopilot-e2e-replay

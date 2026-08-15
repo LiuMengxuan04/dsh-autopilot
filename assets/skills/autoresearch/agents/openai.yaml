@@ -1,0 +1,4 @@
+interface:
+  display_name: "Autoresearch"
+  short_description: "Run bounded evidence-driven research iterations"
+  default_prompt: "Research this question through bounded hypotheses, experiments, and evidence."

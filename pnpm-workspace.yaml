@@ -1,0 +1,9 @@
+allowBuilds:
+  # DSH's local subprocess provider restores executable helper permissions.
+  '@deepseek-ai/dsh-subprocess-local': true
+  # Optional provider lifecycle scripts are not needed by this package.
+  '@google/genai': false
+  protobufjs: false
+  # DSH uses these native packages for Windows durable publication and persistent terminals.
+  koffi: true
+  node-pty: true

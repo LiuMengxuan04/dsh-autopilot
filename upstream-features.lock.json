@@ -1,0 +1,890 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-15",
+  "catalogSha256": "6a7c864fe1fe09e876fce2a58ee70c9481bcfa9412c13cebd6c0e01b3b54639a",
+  "catalogScope": "User-visible workflow, orchestration, tool, context, recovery, extension, and operator capabilities explicitly cataloged at the pinned revisions. Installer variants, branding, telemetry, and implementation-private helper modules are excluded.",
+  "references": {
+    "oh-my-codex": {
+      "repository": "https://github.com/Yeachan-Heo/oh-my-codex",
+      "commit": "e94437fd141b4623d12a7c712d6f318e7aa47439"
+    },
+    "oh-my-openagent": {
+      "repository": "https://github.com/code-yeongyu/oh-my-openagent",
+      "commit": "038ed0cbbefe2b40677b63867aeea0d16bc303e0"
+    }
+  },
+  "sources": [
+    {
+      "id": "omo-features",
+      "upstream": "oh-my-openagent",
+      "path": "docs/reference/features.md",
+      "lineCount": 1205,
+      "sha256": "5ef7854847cd151f17128e67b7d2719af43a8088319c772a1fafc17943031b17",
+      "url": "https://github.com/code-yeongyu/oh-my-openagent/blob/038ed0cbbefe2b40677b63867aeea0d16bc303e0/docs/reference/features.md"
+    },
+    {
+      "id": "omo-readme",
+      "upstream": "oh-my-openagent",
+      "path": "README.md",
+      "lineCount": 524,
+      "sha256": "273a2ee001e222b9584c64b11bdd15452dccee7d47d51bbbfe56d7a37df0a4a0",
+      "url": "https://github.com/code-yeongyu/oh-my-openagent/blob/038ed0cbbefe2b40677b63867aeea0d16bc303e0/README.md"
+    },
+    {
+      "id": "omx-agents",
+      "upstream": "oh-my-codex",
+      "path": "docs/agents.html",
+      "lineCount": 96,
+      "sha256": "d8f4996683f0311a8d30c39cbeb8afe3b1eece60852ec3639bd93ab3dd0208a1",
+      "url": "https://github.com/Yeachan-Heo/oh-my-codex/blob/e94437fd141b4623d12a7c712d6f318e7aa47439/docs/agents.html"
+    },
+    {
+      "id": "omx-readme",
+      "upstream": "oh-my-codex",
+      "path": "README.md",
+      "lineCount": 520,
+      "sha256": "8b19e3c8ce7700949e67ae49492d9c9b5bbc046edc3c1da4e2abbdfed49013e5",
+      "url": "https://github.com/Yeachan-Heo/oh-my-codex/blob/e94437fd141b4623d12a7c712d6f318e7aa47439/README.md"
+    },
+    {
+      "id": "omx-release-016",
+      "upstream": "oh-my-codex",
+      "path": "docs/release-notes-0.16.0.md",
+      "lineCount": 31,
+      "sha256": "8c856719fce1802ca4c273b61bf0453515d08678d1d9d0e15063048d4f5e1734",
+      "url": "https://github.com/Yeachan-Heo/oh-my-codex/blob/e94437fd141b4623d12a7c712d6f318e7aa47439/docs/release-notes-0.16.0.md"
+    },
+    {
+      "id": "omx-skills",
+      "upstream": "oh-my-codex",
+      "path": "docs/skills.html",
+      "lineCount": 111,
+      "sha256": "ae758388e3a00b1b6c199ac4c3e2501139527902d1ef74e0ce9f7cd5051c76c8",
+      "url": "https://github.com/Yeachan-Heo/oh-my-codex/blob/e94437fd141b4623d12a7c712d6f318e7aa47439/docs/skills.html"
+    },
+    {
+      "id": "omx-catalog-manifest",
+      "upstream": "oh-my-codex",
+      "path": "src/catalog/manifest.json",
+      "lineCount": 484,
+      "sha256": "27c9072d3a9e1974806c5c785aa9856b78f8c7cb7b7156f89a446bed4f261414",
+      "url": "https://github.com/Yeachan-Heo/oh-my-codex/blob/e94437fd141b4623d12a7c712d6f318e7aa47439/src/catalog/manifest.json"
+    }
+  ],
+  "expectedFeatureIds": {
+    "oh-my-codex": [
+      "omx.ai-slop-cleaner",
+      "omx.analyze",
+      "omx.ask",
+      "omx.autopilot",
+      "omx.autoresearch",
+      "omx.autoresearch-goal",
+      "omx.best-practice-research",
+      "omx.build-fix",
+      "omx.cancel",
+      "omx.code-review",
+      "omx.configure-notifications",
+      "omx.deep-interview",
+      "omx.deepsearch",
+      "omx.design",
+      "omx.doctor",
+      "omx.ecomode",
+      "omx.git-master",
+      "omx.goal",
+      "omx.hud",
+      "omx.mcp-compatibility",
+      "omx.mission",
+      "omx.native-hooks",
+      "omx.note",
+      "omx.omx-setup",
+      "omx.performance-goal",
+      "omx.pipeline",
+      "omx.plan",
+      "omx.prometheus-strict",
+      "omx.ralph",
+      "omx.ralph-init",
+      "omx.ralplan",
+      "omx.review",
+      "omx.scoped-agent-guidance",
+      "omx.security-review",
+      "omx.skill-browser",
+      "omx.sparkshell",
+      "omx.specialist-agent-catalog",
+      "omx.swarm",
+      "omx.tdd",
+      "omx.team",
+      "omx.team-compaction-context",
+      "omx.team-resume",
+      "omx.team-worktrees",
+      "omx.trace",
+      "omx.ultragoal",
+      "omx.ultraqa",
+      "omx.ultrawork",
+      "omx.visual-ralph",
+      "omx.visual-verdict",
+      "omx.wiki",
+      "omx.worker"
+    ],
+    "oh-my-openagent": [
+      "omo.agent-model-fallbacks",
+      "omo.agent-tool-restrictions",
+      "omo.ast-grep",
+      "omo.background-agents",
+      "omo.browser-automation",
+      "omo.built-in-mcps",
+      "omo.category-model-routing",
+      "omo.claude-code-compatibility",
+      "omo.code-search",
+      "omo.comment-checker",
+      "omo.compaction-continuity",
+      "omo.conditional-rules",
+      "omo.custom-commands",
+      "omo.custom-skills",
+      "omo.discipline-agents",
+      "omo.doctor",
+      "omo.file-based-prompts",
+      "omo.frontend-design",
+      "omo.git-master",
+      "omo.goal",
+      "omo.handoff",
+      "omo.hash-anchored-edit",
+      "omo.hyperplan",
+      "omo.init-deep",
+      "omo.intent-gate",
+      "omo.lifecycle-hooks",
+      "omo.lsp",
+      "omo.mcp-lifecycle",
+      "omo.model-setup",
+      "omo.multimodal-analysis",
+      "omo.notifications",
+      "omo.refactor",
+      "omo.review-work",
+      "omo.rules-injection",
+      "omo.session-recovery",
+      "omo.session-tools",
+      "omo.skill-embedded-mcps",
+      "omo.start-work",
+      "omo.stop-continuation",
+      "omo.task-management",
+      "omo.team-mailbox",
+      "omo.team-mode",
+      "omo.team-worktrees",
+      "omo.tmux",
+      "omo.todo-enforcer",
+      "omo.ultrawork",
+      "omo.ulw-loop",
+      "omo.ulw-research",
+      "omo.visual-team-status",
+      "omo.write-before-read"
+    ]
+  },
+  "features": [
+    {
+      "id": "omx.ai-slop-cleaner",
+      "upstream": "oh-my-codex",
+      "title": "AI-generated prose and code cleanup workflow",
+      "capabilityId": "ai-slop-cleanup-workflow",
+      "citation": { "sourceId": "omx-catalog-manifest", "lineStart": 127, "lineEnd": 130, "locator": "active ai-slop-cleaner skill" }
+    },
+    {
+      "id": "omx.analyze",
+      "upstream": "oh-my-codex",
+      "title": "Analyze agent shortcut",
+      "capabilityId": "assembled-analysis-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 68, "locator": "$analyze agent shortcut" }
+    },
+    {
+      "id": "omx.ask",
+      "upstream": "oh-my-codex",
+      "title": "Specialist advisor shortcut",
+      "capabilityId": "advisor-workflow",
+      "citation": { "sourceId": "omx-catalog-manifest", "lineStart": 185, "lineEnd": 188, "locator": "active ask skill" }
+    },
+    {
+      "id": "omx.autopilot",
+      "upstream": "oh-my-codex",
+      "title": "Supervised planning-to-execution autopilot loop",
+      "capabilityId": "canonical-autopilot-fsm",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 40, "locator": "$autopilot execution mode" }
+    },
+    {
+      "id": "omx.autoresearch",
+      "upstream": "oh-my-codex",
+      "title": "Validator-gated bounded research",
+      "capabilityId": "autoresearch-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 56, "lineEnd": 61, "locator": "$autoresearch boundary" }
+    },
+    {
+      "id": "omx.autoresearch-goal",
+      "upstream": "oh-my-codex",
+      "title": "Durable Goal-backed research missions",
+      "capabilityId": "goal-linked-research-mission",
+      "citation": { "sourceId": "omx-skills", "lineStart": 56, "lineEnd": 61, "locator": "$autoresearch-goal boundary" }
+    },
+    {
+      "id": "omx.best-practice-research",
+      "upstream": "oh-my-codex",
+      "title": "Official and upstream best-practice research",
+      "capabilityId": "assembled-best-practice-research",
+      "citation": { "sourceId": "omx-skills", "lineStart": 47, "lineEnd": 53, "locator": "$best-practice-research" }
+    },
+    {
+      "id": "omx.build-fix",
+      "upstream": "oh-my-codex",
+      "title": "Build failure repair shortcut",
+      "capabilityId": "verification-repair-loop",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 71, "locator": "$build-fix agent shortcut" }
+    },
+    {
+      "id": "omx.cancel",
+      "upstream": "oh-my-codex",
+      "title": "Cancellation utility",
+      "capabilityId": "human-lifecycle-controls",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 84, "locator": "$cancel utility" }
+    },
+    {
+      "id": "omx.code-review",
+      "upstream": "oh-my-codex",
+      "title": "Merge-readiness code review",
+      "capabilityId": "explicit-code-review-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 25, "lineEnd": 31, "locator": "$code-review canonical gate" }
+    },
+    {
+      "id": "omx.configure-notifications",
+      "upstream": "oh-my-codex",
+      "title": "Notification configuration utility",
+      "capabilityId": "notification-configuration-utility",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 85, "locator": "$configure-notifications utility" }
+    },
+    {
+      "id": "omx.deep-interview",
+      "upstream": "oh-my-codex",
+      "title": "Requirements and boundary interview",
+      "capabilityId": "durable-deep-interview",
+      "citation": { "sourceId": "omx-skills", "lineStart": 25, "lineEnd": 30, "locator": "$deep-interview canonical workflow" }
+    },
+    {
+      "id": "omx.deepsearch",
+      "upstream": "oh-my-codex",
+      "title": "Deep repository search shortcut",
+      "capabilityId": "file-and-code-search",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 69, "locator": "$deepsearch agent shortcut" }
+    },
+    {
+      "id": "omx.design",
+      "upstream": "oh-my-codex",
+      "title": "Repository design document workflow",
+      "capabilityId": "executable-design-document-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 74, "locator": "$design agent shortcut" }
+    },
+    {
+      "id": "omx.doctor",
+      "upstream": "oh-my-codex",
+      "title": "Runtime readiness doctor",
+      "capabilityId": "status-doctor-trace-resume-cancel",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 84, "locator": "$doctor utility" }
+    },
+    {
+      "id": "omx.ecomode",
+      "upstream": "oh-my-codex",
+      "title": "Token-efficient model routing",
+      "capabilityId": "cost-aware-model-routing",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 44, "locator": "$ecomode execution mode" }
+    },
+    {
+      "id": "omx.git-master",
+      "upstream": "oh-my-codex",
+      "title": "Git delivery specialist workflow",
+      "capabilityId": "git-history-delivery-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 76, "locator": "$git-master agent shortcut" }
+    },
+    {
+      "id": "omx.goal",
+      "upstream": "oh-my-codex",
+      "title": "Durable objective and checkpoints",
+      "capabilityId": "native-goal-round-continuation",
+      "citation": { "sourceId": "omx-readme", "lineStart": 331, "lineEnd": 342, "locator": "/goal common surface" }
+    },
+    {
+      "id": "omx.hud",
+      "upstream": "oh-my-codex",
+      "title": "Live status HUD",
+      "capabilityId": "live-runtime-hud",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 85, "locator": "$hud utility" }
+    },
+    {
+      "id": "omx.mcp-compatibility",
+      "upstream": "oh-my-codex",
+      "title": "Optional plugin-scoped MCP compatibility servers",
+      "capabilityId": "plugin-scoped-mcp-companions",
+      "citation": { "sourceId": "omx-readme", "lineStart": 367, "lineEnd": 381, "locator": "plugin-scoped MCP companion metadata" }
+    },
+    {
+      "id": "omx.mission",
+      "upstream": "oh-my-codex",
+      "title": "Durable sequential mission queue",
+      "capabilityId": "mission-queue-workflow",
+      "citation": { "sourceId": "omx-readme", "lineStart": 331, "lineEnd": 350, "locator": "omx mission queue runner" }
+    },
+    {
+      "id": "omx.native-hooks",
+      "upstream": "oh-my-codex",
+      "title": "Native and fallback lifecycle hooks",
+      "capabilityId": "lifecycle-hook-extension",
+      "citation": { "sourceId": "omx-readme", "lineStart": 383, "lineEnd": 389, "locator": "native Codex hook lifecycle surface" }
+    },
+    {
+      "id": "omx.note",
+      "upstream": "oh-my-codex",
+      "title": "Durable project note utility",
+      "capabilityId": "project-memory-and-notepad",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 84, "locator": "$note utility" }
+    },
+    {
+      "id": "omx.omx-setup",
+      "upstream": "oh-my-codex",
+      "title": "Scoped runtime setup and refresh utility",
+      "capabilityId": "installation-setup-workflow",
+      "citation": { "sourceId": "omx-catalog-manifest", "lineStart": 245, "lineEnd": 248, "locator": "active omx-setup skill" }
+    },
+    {
+      "id": "omx.performance-goal",
+      "upstream": "oh-my-codex",
+      "title": "Evaluator-backed performance optimization goals",
+      "capabilityId": "measured-performance-loop",
+      "citation": { "sourceId": "omx-release-016", "lineStart": 9, "lineEnd": 20, "locator": "performance-goal native goal-mode workflow" }
+    },
+    {
+      "id": "omx.pipeline",
+      "upstream": "oh-my-codex",
+      "title": "Multi-stage execution pipeline",
+      "capabilityId": "execution-pipeline-workflow",
+      "citation": { "sourceId": "omx-catalog-manifest", "lineStart": 57, "lineEnd": 61, "locator": "active pipeline skill" }
+    },
+    {
+      "id": "omx.plan",
+      "upstream": "oh-my-codex",
+      "title": "Strategic planning workflow",
+      "capabilityId": "durable-strategic-planning",
+      "citation": { "sourceId": "omx-skills", "lineStart": 47, "lineEnd": 53, "locator": "$plan supporting workflow" }
+    },
+    {
+      "id": "omx.prometheus-strict",
+      "upstream": "oh-my-codex",
+      "title": "Adversarial plan hardening",
+      "capabilityId": "plan-hardening-quorum",
+      "citation": { "sourceId": "omx-skills", "lineStart": 25, "lineEnd": 31, "locator": "$prometheus-strict canonical workflow" }
+    },
+    {
+      "id": "omx.ralph",
+      "upstream": "oh-my-codex",
+      "title": "Persistent completion loop",
+      "capabilityId": "ralph-fresh-agent-loop",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 39, "locator": "$ralph execution mode" }
+    },
+    {
+      "id": "omx.ralph-init",
+      "upstream": "oh-my-codex",
+      "title": "Ralph loop initialization utility",
+      "capabilityId": "ralph-fresh-agent-loop",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 85, "locator": "$ralph-init utility" }
+    },
+    {
+      "id": "omx.ralplan",
+      "upstream": "oh-my-codex",
+      "title": "Planner, architect, and critic consensus planning",
+      "capabilityId": "runtime-consensus-planning",
+      "citation": { "sourceId": "omx-skills", "lineStart": 25, "lineEnd": 30, "locator": "$ralplan canonical workflow" }
+    },
+    {
+      "id": "omx.review",
+      "upstream": "oh-my-codex",
+      "title": "General review shortcut",
+      "capabilityId": "code-review-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 76, "locator": "$review agent shortcut" }
+    },
+    {
+      "id": "omx.scoped-agent-guidance",
+      "upstream": "oh-my-codex",
+      "title": "Scoped AGENTS.md project guidance",
+      "capabilityId": "repository-instruction-discovery",
+      "citation": { "sourceId": "omx-readme", "lineStart": 125, "lineEnd": 133, "locator": "project guidance through scoped AGENTS.md" }
+    },
+    {
+      "id": "omx.security-review",
+      "upstream": "oh-my-codex",
+      "title": "Security review workflow",
+      "capabilityId": "security-review-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 73, "locator": "$security-review agent shortcut" }
+    },
+    {
+      "id": "omx.skill-browser",
+      "upstream": "oh-my-codex",
+      "title": "Installed skill catalog and loader",
+      "capabilityId": "bundled-skill-catalog",
+      "citation": { "sourceId": "omx-readme", "lineStart": 331, "lineEnd": 342, "locator": "/skills common surface" }
+    },
+    {
+      "id": "omx.sparkshell",
+      "upstream": "oh-my-codex",
+      "title": "Bounded shell inspection and verification",
+      "capabilityId": "bounded-shell-workflow",
+      "citation": { "sourceId": "omx-readme", "lineStart": 411, "lineEnd": 422, "locator": "omx sparkshell" }
+    },
+    {
+      "id": "omx.specialist-agent-catalog",
+      "upstream": "oh-my-codex",
+      "title": "Model-routed build, review, domain, product, and coordination specialists",
+      "capabilityId": "specialist-agent-catalog",
+      "citation": { "sourceId": "omx-agents", "lineStart": 21, "lineEnd": 89, "locator": "Agent Catalog" }
+    },
+    {
+      "id": "omx.swarm",
+      "upstream": "oh-my-codex",
+      "title": "Team-compatible swarm facade",
+      "capabilityId": "bounded-workflow-fanout",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 44, "locator": "$swarm execution mode" }
+    },
+    {
+      "id": "omx.tdd",
+      "upstream": "oh-my-codex",
+      "title": "Test-driven development workflow",
+      "capabilityId": "tdd-workflow",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 71, "locator": "$tdd agent shortcut" }
+    },
+    {
+      "id": "omx.team",
+      "upstream": "oh-my-codex",
+      "title": "Coordinated parallel multi-agent execution",
+      "capabilityId": "continuable-team-execution",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 39, "locator": "$team execution mode" }
+    },
+    {
+      "id": "omx.team-compaction-context",
+      "upstream": "oh-my-codex",
+      "title": "Team preflight context preserved for compaction recovery",
+      "capabilityId": "team-compaction-continuity",
+      "citation": { "sourceId": "omx-readme", "lineStart": 352, "lineEnd": 358, "locator": "team preflight-context.json" }
+    },
+    {
+      "id": "omx.team-resume",
+      "upstream": "oh-my-codex",
+      "title": "Durable team status and resume lifecycle",
+      "capabilityId": "crash-only-cold-recovery",
+      "citation": { "sourceId": "omx-readme", "lineStart": 352, "lineEnd": 365, "locator": "omx team status and resume" }
+    },
+    {
+      "id": "omx.team-worktrees",
+      "upstream": "oh-my-codex",
+      "title": "Task-isolated worktree execution",
+      "capabilityId": "team-member-worktrees",
+      "citation": { "sourceId": "omx-readme", "lineStart": 197, "lineEnd": 283, "locator": "named worktree launch safety" }
+    },
+    {
+      "id": "omx.trace",
+      "upstream": "oh-my-codex",
+      "title": "Execution trace utility",
+      "capabilityId": "audit-export",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 84, "locator": "$trace utility" }
+    },
+    {
+      "id": "omx.ultragoal",
+      "upstream": "oh-my-codex",
+      "title": "Durable multi-goal ledger and handoff",
+      "capabilityId": "durable-ultragoal",
+      "citation": { "sourceId": "omx-skills", "lineStart": 25, "lineEnd": 31, "locator": "$ultragoal canonical workflow" }
+    },
+    {
+      "id": "omx.ultraqa",
+      "upstream": "oh-my-codex",
+      "title": "Adversarial test, verify, and fix loop",
+      "capabilityId": "adversarial-qa-loop",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 44, "locator": "$ultraqa execution mode" }
+    },
+    {
+      "id": "omx.ultrawork",
+      "upstream": "oh-my-codex",
+      "title": "Maximum parallel execution mode",
+      "capabilityId": "ultrawork-orchestration",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 40, "locator": "$ultrawork execution mode" }
+    },
+    {
+      "id": "omx.visual-ralph",
+      "upstream": "oh-my-codex",
+      "title": "Measured visual-reference implementation loop",
+      "capabilityId": "visual-semantic-iteration",
+      "citation": { "sourceId": "omx-skills", "lineStart": 64, "lineEnd": 75, "locator": "$visual-ralph agent shortcut" }
+    },
+    {
+      "id": "omx.visual-verdict",
+      "upstream": "oh-my-codex",
+      "title": "Structured screenshot and reference visual QA",
+      "capabilityId": "visual-semantic-verdict",
+      "citation": { "sourceId": "omx-skills", "lineStart": 34, "lineEnd": 43, "locator": "$visual-verdict execution mode" }
+    },
+    {
+      "id": "omx.wiki",
+      "upstream": "oh-my-codex",
+      "title": "Repository project knowledge wiki",
+      "capabilityId": "project-wiki",
+      "citation": { "sourceId": "omx-readme", "lineStart": 424, "lineEnd": 437, "locator": "omx wiki" }
+    },
+    {
+      "id": "omx.worker",
+      "upstream": "oh-my-codex",
+      "title": "Team worker protocol and lifecycle",
+      "capabilityId": "team-worker-protocol",
+      "citation": { "sourceId": "omx-skills", "lineStart": 79, "lineEnd": 85, "locator": "$worker internal protocol" }
+    },
+    {
+      "id": "omo.agent-model-fallbacks",
+      "upstream": "oh-my-openagent",
+      "title": "Provider and model fallback chains",
+      "capabilityId": "cross-lane-model-fallbacks",
+      "citation": { "sourceId": "omo-features", "lineStart": 258, "lineEnd": 281, "locator": "Fallback Models" }
+    },
+    {
+      "id": "omo.agent-tool-restrictions",
+      "upstream": "oh-my-openagent",
+      "title": "Role-specific tool restrictions",
+      "capabilityId": "named-agent-tool-policies",
+      "citation": { "sourceId": "omo-features", "lineStart": 35, "lineEnd": 59, "locator": "Tool Restrictions and enforcement" }
+    },
+    {
+      "id": "omo.ast-grep",
+      "upstream": "oh-my-openagent",
+      "title": "AST-aware code search and rewrite",
+      "capabilityId": "multi-language-ast-tools",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "AST-Grep highlight" }
+    },
+    {
+      "id": "omo.background-agents",
+      "upstream": "oh-my-openagent",
+      "title": "Continuable parallel background specialists",
+      "capabilityId": "general-background-agent-surface",
+      "citation": { "sourceId": "omo-features", "lineStart": 61, "lineEnd": 78, "locator": "Background Agents" }
+    },
+    {
+      "id": "omo.browser-automation",
+      "upstream": "oh-my-openagent",
+      "title": "Browser automation and screenshot verification",
+      "capabilityId": "general-browser-automation",
+      "citation": { "sourceId": "omo-features", "lineStart": 504, "lineEnd": 551, "locator": "Browser Automation Options" }
+    },
+    {
+      "id": "omo.built-in-mcps",
+      "upstream": "oh-my-openagent",
+      "title": "Built-in web, docs, code-search, LSP, and codegraph MCPs",
+      "capabilityId": "built-in-mcp-tier",
+      "citation": { "sourceId": "omo-features", "lineStart": 1025, "lineEnd": 1033, "locator": "Built-in MCPs" }
+    },
+    {
+      "id": "omo.category-model-routing",
+      "upstream": "oh-my-openagent",
+      "title": "Category-based specialist and model routing",
+      "capabilityId": "built-in-category-catalog",
+      "citation": { "sourceId": "omo-features", "lineStart": 148, "lineEnd": 181, "locator": "Category System" }
+    },
+    {
+      "id": "omo.claude-code-compatibility",
+      "upstream": "oh-my-openagent",
+      "title": "Claude Code configuration compatibility",
+      "capabilityId": "claude-code-configuration-compatibility",
+      "citation": { "sourceId": "omo-features", "lineStart": 1154, "lineEnd": 1182, "locator": "Claude Code Compatibility" }
+    },
+    {
+      "id": "omo.code-search",
+      "upstream": "oh-my-openagent",
+      "title": "Repository content and file search tools",
+      "capabilityId": "assembled-code-search",
+      "citation": { "sourceId": "omo-features", "lineStart": 635, "lineEnd": 645, "locator": "Code Search Tools" }
+    },
+    {
+      "id": "omo.comment-checker",
+      "upstream": "oh-my-openagent",
+      "title": "AI-slop comment checker",
+      "capabilityId": "post-write-comment-checker",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "Comment Checker highlight" }
+    },
+    {
+      "id": "omo.compaction-continuity",
+      "upstream": "oh-my-openagent",
+      "title": "Context and task preservation during compaction",
+      "capabilityId": "context-compaction-continuity",
+      "citation": { "sourceId": "omo-features", "lineStart": 857, "lineEnd": 865, "locator": "compaction context hooks" }
+    },
+    {
+      "id": "omo.conditional-rules",
+      "upstream": "oh-my-openagent",
+      "title": "Glob-conditional rule injection",
+      "capabilityId": "claude-compatible-conditional-rules",
+      "citation": { "sourceId": "omo-features", "lineStart": 1133, "lineEnd": 1152, "locator": "Conditional Rules" }
+    },
+    {
+      "id": "omo.custom-commands",
+      "upstream": "oh-my-openagent",
+      "title": "Project and user custom command loading",
+      "capabilityId": "multi-root-custom-command-loading",
+      "citation": { "sourceId": "omo-features", "lineStart": 438, "lineEnd": 445, "locator": "Custom Commands" }
+    },
+    {
+      "id": "omo.custom-skills",
+      "upstream": "oh-my-openagent",
+      "title": "Project and user custom SKILL.md loading",
+      "capabilityId": "multi-root-custom-skill-loading",
+      "citation": { "sourceId": "omo-features", "lineStart": 553, "lineEnd": 587, "locator": "Custom Skill Creation" }
+    },
+    {
+      "id": "omo.discipline-agents",
+      "upstream": "oh-my-openagent",
+      "title": "Parallel specialist discipline agents",
+      "capabilityId": "specialist-agent-catalog",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "Discipline Agents highlight" }
+    },
+    {
+      "id": "omo.doctor",
+      "upstream": "oh-my-openagent",
+      "title": "Capability and environment diagnostics",
+      "capabilityId": "full-runtime-doctor",
+      "citation": { "sourceId": "omo-readme", "lineStart": 433, "lineEnd": 453, "locator": "Doctor Command overview" }
+    },
+    {
+      "id": "omo.file-based-prompts",
+      "upstream": "oh-my-openagent",
+      "title": "File-backed agent and category prompts",
+      "capabilityId": "agent-category-file-prompts",
+      "citation": { "sourceId": "omo-features", "lineStart": 283, "lineEnd": 313, "locator": "File-Based Prompts" }
+    },
+    {
+      "id": "omo.frontend-design",
+      "upstream": "oh-my-openagent",
+      "title": "Frontend design workflow",
+      "capabilityId": "frontend-design-workflow",
+      "citation": { "sourceId": "omo-features", "lineStart": 459, "lineEnd": 465, "locator": "frontend built-in skill" }
+    },
+    {
+      "id": "omo.git-master",
+      "upstream": "oh-my-openagent",
+      "title": "Atomic commit, rebase, and history workflow",
+      "capabilityId": "git-history-delivery-workflow",
+      "citation": { "sourceId": "omo-features", "lineStart": 459, "lineEnd": 493, "locator": "git-master built-in skill" }
+    },
+    {
+      "id": "omo.goal",
+      "upstream": "oh-my-openagent",
+      "title": "Persistent session objective with idle continuation",
+      "capabilityId": "native-goal-round-continuation",
+      "citation": { "sourceId": "omo-features", "lineStart": 342, "lineEnd": 384, "locator": "/goal behavior" }
+    },
+    {
+      "id": "omo.handoff",
+      "upstream": "oh-my-openagent",
+      "title": "Structured fresh-session handoff",
+      "capabilityId": "handoff-summary",
+      "citation": { "sourceId": "omo-features", "lineStart": 432, "lineEnd": 436, "locator": "/handoff" }
+    },
+    {
+      "id": "omo.hash-anchored-edit",
+      "upstream": "oh-my-openagent",
+      "title": "Stale-safe hash-anchored edits",
+      "capabilityId": "hash-anchored-edit",
+      "citation": { "sourceId": "omo-features", "lineStart": 646, "lineEnd": 652, "locator": "Edit Tools" }
+    },
+    {
+      "id": "omo.hyperplan",
+      "upstream": "oh-my-openagent",
+      "title": "Adversarial multi-agent plan review",
+      "capabilityId": "hyperplan-workflow",
+      "citation": { "sourceId": "omo-features", "lineStart": 330, "lineEnd": 340, "locator": "/hyperplan command" }
+    },
+    {
+      "id": "omo.init-deep",
+      "upstream": "oh-my-openagent",
+      "title": "Hierarchical AGENTS.md generation",
+      "capabilityId": "hierarchical-instruction-generator",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "/init-deep highlight" }
+    },
+    {
+      "id": "omo.intent-gate",
+      "upstream": "oh-my-openagent",
+      "title": "User-intent classification gate",
+      "capabilityId": "message-intent-router",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "IntentGate highlight" }
+    },
+    {
+      "id": "omo.lifecycle-hooks",
+      "upstream": "oh-my-openagent",
+      "title": "Configurable lifecycle and tool hooks",
+      "capabilityId": "composed-hook-compatibility",
+      "citation": { "sourceId": "omo-features", "lineStart": 830, "lineEnd": 853, "locator": "Hooks and hook events" }
+    },
+    {
+      "id": "omo.lsp",
+      "upstream": "oh-my-openagent",
+      "title": "LSP diagnostics, navigation, symbols, and rename",
+      "capabilityId": "full-lsp-tool-suite",
+      "citation": { "sourceId": "omo-features", "lineStart": 654, "lineEnd": 667, "locator": "LSP Tools" }
+    },
+    {
+      "id": "omo.mcp-lifecycle",
+      "upstream": "oh-my-openagent",
+      "title": "Three-tier MCP discovery and lifecycle",
+      "capabilityId": "three-tier-mcp-lifecycle",
+      "citation": { "sourceId": "omo-features", "lineStart": 982, "lineEnd": 1015, "locator": "MCP architecture" }
+    },
+    {
+      "id": "omo.model-setup",
+      "upstream": "oh-my-openagent",
+      "title": "Agent-to-model matching",
+      "capabilityId": "model-setup-resolution",
+      "citation": { "sourceId": "omo-readme", "lineStart": 433, "lineEnd": 453, "locator": "Model Setup overview" }
+    },
+    {
+      "id": "omo.multimodal-analysis",
+      "upstream": "oh-my-openagent",
+      "title": "Image, diagram, and PDF analysis",
+      "capabilityId": "image-pdf-diagram-analysis",
+      "citation": { "sourceId": "omo-features", "lineStart": 682, "lineEnd": 686, "locator": "Visual Analysis Tools" }
+    },
+    {
+      "id": "omo.notifications",
+      "upstream": "oh-my-openagent",
+      "title": "Background completion and idle notifications",
+      "capabilityId": "background-idle-notifications",
+      "citation": { "sourceId": "omo-features", "lineStart": 904, "lineEnd": 912, "locator": "Notifications and UX hooks" }
+    },
+    {
+      "id": "omo.refactor",
+      "upstream": "oh-my-openagent",
+      "title": "LSP, AST, architecture, and TDD refactoring workflow",
+      "capabilityId": "refactor-workflow",
+      "citation": { "sourceId": "omo-features", "lineStart": 392, "lineEnd": 408, "locator": "/refactor" }
+    },
+    {
+      "id": "omo.review-work",
+      "upstream": "oh-my-openagent",
+      "title": "Parallel post-implementation review quorum",
+      "capabilityId": "explicit-review-workflow",
+      "citation": { "sourceId": "omo-features", "lineStart": 459, "lineEnd": 468, "locator": "review-work built-in skill" }
+    },
+    {
+      "id": "omo.rules-injection",
+      "upstream": "oh-my-openagent",
+      "title": "Directory AGENTS.md instruction injection",
+      "capabilityId": "repository-instruction-discovery",
+      "citation": { "sourceId": "omo-features", "lineStart": 1117, "lineEnd": 1131, "locator": "Directory AGENTS.md" }
+    },
+    {
+      "id": "omo.session-recovery",
+      "upstream": "oh-my-openagent",
+      "title": "Automatic recovery from session and context failures",
+      "capabilityId": "session-transcript-recovery",
+      "citation": { "sourceId": "omo-features", "lineStart": 315, "lineEnd": 325, "locator": "Session Recovery" }
+    },
+    {
+      "id": "omo.session-tools",
+      "upstream": "oh-my-openagent",
+      "title": "Session list, read, search, and metadata tools",
+      "capabilityId": "assembled-session-tool-suite",
+      "citation": { "sourceId": "omo-features", "lineStart": 695, "lineEnd": 728, "locator": "Session Tools" }
+    },
+    {
+      "id": "omo.skill-embedded-mcps",
+      "upstream": "oh-my-openagent",
+      "title": "On-demand MCP servers embedded in skills",
+      "capabilityId": "skill-declared-mcp-servers",
+      "citation": { "sourceId": "omo-features", "lineStart": 1035, "lineEnd": 1051, "locator": "Skill-Embedded MCPs" }
+    },
+    {
+      "id": "omo.start-work",
+      "upstream": "oh-my-openagent",
+      "title": "Plan-to-worktree-to-PR delivery pipeline",
+      "capabilityId": "authorized-start-work-delivery",
+      "citation": { "sourceId": "omo-features", "lineStart": 410, "lineEnd": 424, "locator": "/start-work" }
+    },
+    {
+      "id": "omo.stop-continuation",
+      "upstream": "oh-my-openagent",
+      "title": "Stop all continuation mechanisms",
+      "capabilityId": "global-continuation-stop",
+      "citation": { "sourceId": "omo-features", "lineStart": 426, "lineEnd": 430, "locator": "/stop-continuation" }
+    },
+    {
+      "id": "omo.task-management",
+      "upstream": "oh-my-openagent",
+      "title": "Persistent dependency-aware task management",
+      "capabilityId": "durable-task-dag",
+      "citation": { "sourceId": "omo-features", "lineStart": 730, "lineEnd": 803, "locator": "Task Management Tools" }
+    },
+    {
+      "id": "omo.team-mailbox",
+      "upstream": "oh-my-openagent",
+      "title": "Shared deferred-ack team mailbox",
+      "capabilityId": "shared-team-mailbox-protocol",
+      "citation": { "sourceId": "omo-features", "lineStart": 131, "lineEnd": 135, "locator": "Team Mode shared mailbox" }
+    },
+    {
+      "id": "omo.team-mode",
+      "upstream": "oh-my-openagent",
+      "title": "Bounded lead-and-member team execution",
+      "capabilityId": "lead-member-team-mode",
+      "citation": { "sourceId": "omo-readme", "lineStart": 268, "lineEnd": 290, "locator": "Team Mode" }
+    },
+    {
+      "id": "omo.team-worktrees",
+      "upstream": "oh-my-openagent",
+      "title": "Optional per-member git worktrees",
+      "capabilityId": "team-member-worktrees",
+      "citation": { "sourceId": "omo-features", "lineStart": 131, "lineEnd": 135, "locator": "Team Mode worktrees" }
+    },
+    {
+      "id": "omo.tmux",
+      "upstream": "oh-my-openagent",
+      "title": "Persistent interactive terminal integration",
+      "capabilityId": "persistent-terminal-manager",
+      "citation": { "sourceId": "omo-features", "lineStart": 805, "lineEnd": 828, "locator": "Interactive Terminal Tools" }
+    },
+    {
+      "id": "omo.todo-enforcer",
+      "upstream": "oh-my-openagent",
+      "title": "Idle continuation until todos complete",
+      "capabilityId": "todo-idle-continuation",
+      "citation": { "sourceId": "omo-features", "lineStart": 923, "lineEnd": 929, "locator": "todo-continuation-enforcer" }
+    },
+    {
+      "id": "omo.ultrawork",
+      "upstream": "oh-my-openagent",
+      "title": "All-agent completion-oriented execution mode",
+      "capabilityId": "automatic-ultrawork-mode",
+      "citation": { "sourceId": "omo-readme", "lineStart": 208, "lineEnd": 245, "locator": "ultrawork highlight" }
+    },
+    {
+      "id": "omo.ulw-loop",
+      "upstream": "oh-my-openagent",
+      "title": "Durable multi-goal loop with evidence audit",
+      "capabilityId": "durable-multi-goal-loop",
+      "citation": { "sourceId": "omo-readme", "lineStart": 224, "lineEnd": 245, "locator": "Ulw Loop highlight" }
+    },
+    {
+      "id": "omo.ulw-research",
+      "upstream": "oh-my-openagent",
+      "title": "Parallel evidence-saturated research workflow",
+      "capabilityId": "evidence-saturated-research",
+      "citation": { "sourceId": "omo-features", "lineStart": 459, "lineEnd": 470, "locator": "ulw-research built-in skill" }
+    },
+    {
+      "id": "omo.visual-team-status",
+      "upstream": "oh-my-openagent",
+      "title": "Real-time multi-agent tmux visualization",
+      "capabilityId": "live-team-visualization",
+      "citation": { "sourceId": "omo-readme", "lineStart": 268, "lineEnd": 290, "locator": "Team Mode tmux visualization" }
+    },
+    {
+      "id": "omo.write-before-read",
+      "upstream": "oh-my-openagent",
+      "title": "Existing-file write-before-read guard",
+      "capabilityId": "write-before-read-guard",
+      "citation": { "sourceId": "omo-features", "lineStart": 879, "lineEnd": 887, "locator": "write-existing-file-guard" }
+    }
+  ]
+}

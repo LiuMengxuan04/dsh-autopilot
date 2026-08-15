@@ -1,0 +1,4 @@
+interface:
+  display_name: "Start Work"
+  short_description: "Execute a plan through verified local delivery"
+  default_prompt: "Execute the approved plan, verify it, and prepare a local delivery artifact."

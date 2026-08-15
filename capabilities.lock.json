@@ -1,0 +1,1317 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-15",
+  "references": {
+    "oh-my-codex": {
+      "repository": "https://github.com/Yeachan-Heo/oh-my-codex",
+      "commit": "e94437fd141b4623d12a7c712d6f318e7aa47439"
+    },
+    "oh-my-openagent": {
+      "repository": "https://github.com/code-yeongyu/oh-my-openagent",
+      "formerName": "oh-my-opencode",
+      "commit": "038ed0cbbefe2b40677b63867aeea0d16bc303e0"
+    },
+    "deepseek-harness": {
+      "repository": "https://github.com/deepseek-ai/deepseek-harness",
+      "version": "0.1.0-rc.5",
+      "commit": "47f943859bef60e4160492346772ded9b24f765a"
+    }
+  },
+  "capabilities": [
+    {
+      "id": "native-goal-round-continuation",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native",
+      "status": "packed-verified",
+      "evidence": [{ "kind": "e2e", "path": "tests/e2e/packed-web.spec.ts" }]
+    },
+    {
+      "id": "durable-authorization-ledger",
+      "source": ["oh-my-codex", "oh-my-openagent", "dsh-autopilot"],
+      "implementation": "plugin-storage-domain-sidecar",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-store.ts" },
+        { "kind": "test", "path": "tests/unit/run-store.spec.ts" }
+      ]
+    },
+    {
+      "id": "active-time-lease",
+      "source": ["dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/service.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" }
+      ]
+    },
+    {
+      "id": "run-budget-persistence",
+      "source": ["oh-my-codex", "oh-my-openagent", "dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/run-store.spec.ts" }
+      ]
+    },
+    {
+      "id": "human-lifecycle-controls",
+      "source": ["oh-my-codex", "oh-my-openagent", "dsh-autopilot"],
+      "implementation": "plugin-command-plane",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/commands.ts" },
+        { "kind": "test", "path": "tests/unit/commands.spec.ts" }
+      ]
+    },
+    {
+      "id": "crash-only-cold-recovery",
+      "source": ["oh-my-codex", "oh-my-openagent", "dsh-autopilot"],
+      "implementation": "plugin-on-dsh-session-persistence-and-agent-presets",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/recovery-coordinator.ts" },
+        { "kind": "source", "path": "src/recovery.ts" },
+        { "kind": "source", "path": "src/service.ts" },
+        { "kind": "test", "path": "tests/unit/recovery-coordinator.spec.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/recovery.spec.ts" }
+      ]
+    },
+    {
+      "id": "stale-crash-reconciliation",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-fail-closed-recovery-planner",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/recovery.ts" },
+        { "kind": "test", "path": "tests/unit/recovery.spec.ts" }
+      ]
+    },
+    {
+      "id": "durable-task-dag",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-state.ts" },
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" }
+      ]
+    },
+    {
+      "id": "task-add-split-reorder",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/run-state.spec.ts" }]
+    },
+    {
+      "id": "task-claim-and-attribution",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/orchestrator.spec.ts" }
+      ]
+    },
+    {
+      "id": "parallel-delegation",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/orchestrator.ts" },
+        { "kind": "test", "path": "tests/unit/orchestrator.spec.ts" }
+      ]
+    },
+    {
+      "id": "continuable-background-agents",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-managed-continuable-agents-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/team-service.ts" },
+        { "kind": "test", "path": "tests/unit/team-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/team-tool.spec.ts" }
+      ]
+    },
+    {
+      "id": "bounded-workflow-fanout",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "durable-deployment-profile-dsh-workflow-with-exact-dag-and-budget-accounting",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/workflow-service.ts" },
+        { "kind": "source", "path": "src/tool-workflow.ts" },
+        { "kind": "test", "path": "tests/unit/workflow-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/workflow-tool.spec.ts" },
+        { "kind": "test", "path": "tests/unit/managed-subagents.spec.ts" }
+      ]
+    },
+    {
+      "id": "ralph-fresh-agent-loop",
+      "source": ["oh-my-codex", "deepseek-harness"],
+      "implementation": "plugin-bounded-fresh-agent-loop-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/ralph-service.ts" },
+        { "kind": "source", "path": "src/ralph-store.ts" },
+        { "kind": "test", "path": "tests/unit/ralph-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/ralph-tool.spec.ts" }
+      ]
+    },
+    {
+      "id": "role-routing",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" },
+        { "kind": "test", "path": "tests/unit/orchestrator.spec.ts" }
+      ]
+    },
+    {
+      "id": "model-category-routing",
+      "source": ["oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/orchestrator.spec.ts" }]
+    },
+    {
+      "id": "provider-and-model-fallback",
+      "source": ["oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/orchestrator.ts" },
+        { "kind": "source", "path": "src/evaluator.ts" },
+        { "kind": "test", "path": "tests/unit/orchestrator.spec.ts" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "cost-aware-model-routing",
+      "source": ["oh-my-codex"],
+      "implementation": "plugin-deployment-weighted-economy-task-routing-with-infrastructure-fallback",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/orchestrator.ts" },
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/orchestrator.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "team-mailbox",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-durable-mailbox-and-task-results-on-dsh-continuable-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/team-store.ts" },
+        { "kind": "source", "path": "src/tool-team.ts" },
+        { "kind": "test", "path": "tests/unit/team-store.spec.ts" },
+        { "kind": "test", "path": "tests/unit/team-tool.spec.ts" }
+      ]
+    },
+    {
+      "id": "worktree-isolation",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-durable-git-worktree-service",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/delivery-service.ts" },
+        { "kind": "source", "path": "src/delivery-store.ts" },
+        { "kind": "test", "path": "tests/unit/delivery-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/delivery-integration.spec.ts" }
+      ]
+    },
+    {
+      "id": "deep-interview",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/deep-interview/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "intent-classification-gate",
+      "source": ["oh-my-openagent"],
+      "implementation": "durable-plan-intent-gate-plus-bundled-routing-policy",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-state.ts" },
+        { "kind": "source", "path": "assets/skills/autonomous-development/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "consensus-planning",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skills-plus-task-dag",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/consensus-plan/SKILL.md" },
+        { "kind": "source", "path": "assets/skills/ralplan/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "ultrawork-orchestration",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-task-dag",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/ultrawork/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "durable-ultragoal",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-task-dag-and-ledger",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-state.ts" },
+        { "kind": "source", "path": "src/run-store.ts" },
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/run-store.spec.ts" }
+      ]
+    },
+    {
+      "id": "handoff-summary",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-project-memory",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tool-memory.ts" },
+        { "kind": "source", "path": "assets/skills/handoff/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/tool-memory.spec.ts" }
+      ]
+    },
+    {
+      "id": "start-work-delivery-pipeline",
+      "source": ["oh-my-openagent"],
+      "implementation": "bundled-skill-plus-durable-worktree-and-delivery-plan",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/start-work/SKILL.md" },
+        { "kind": "source", "path": "src/delivery-service.ts" },
+        { "kind": "source", "path": "src/tool-delivery.ts" },
+        { "kind": "test", "path": "tests/unit/delivery-integration.spec.ts" },
+        { "kind": "test", "path": "tests/unit/delivery-tool.spec.ts" }
+      ]
+    },
+    {
+      "id": "tdd-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/tdd/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "autoresearch-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/autoresearch/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "performance-goal-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "bundled-skill-plus-verifier",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/performance-goal/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "code-review-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-evaluator",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/code-review/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "security-review-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-evaluator",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/security-review/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "design-document-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "bundled-skill",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/design-document/SKILL.md" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "git-delivery-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-skill-plus-dsh-native-tools",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "assets/skills/git-master/SKILL.md" },
+        { "kind": "source", "path": "src/delivery-service.ts" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" },
+        { "kind": "test", "path": "tests/unit/delivery-service.spec.ts" }
+      ]
+    },
+    {
+      "id": "browser-and-visual-qa",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bounded-exact-origin-host-browser-with-workspace-png-comparison",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/visual-qa.ts" },
+        { "kind": "test", "path": "tests/unit/visual-qa.spec.ts" }
+      ]
+    },
+    {
+      "id": "multimodal-analysis",
+      "source": ["oh-my-openagent"],
+      "implementation": "dsh-native-tool-composition-with-readiness-and-live-discovery",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/doctor-config.ts" },
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/doctor-config.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "fresh-independent-evaluator",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/evaluator.ts" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "multi-role-review-quorum",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-on-dsh-subagents",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/evaluator.spec.ts" }]
+    },
+    {
+      "id": "deterministic-verification",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "packed-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "e2e", "path": "tests/e2e/packed-web.spec.ts" }
+      ]
+    },
+    {
+      "id": "project-check-discovery",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/check-discovery.ts" },
+        { "kind": "test", "path": "tests/unit/check-discovery.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "evidence-completion-gate",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" }
+      ]
+    },
+    {
+      "id": "verification-repair-loop",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-plus-native-goal",
+      "status": "packed-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "e2e", "path": "tests/e2e/packed-web.spec.ts" }
+      ]
+    },
+    {
+      "id": "verification-attempt-ceiling",
+      "source": ["dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/service.spec.ts" }]
+    },
+    {
+      "id": "verified-final-user-feedback",
+      "source": ["oh-my-codex", "oh-my-openagent", "dsh-autopilot"],
+      "implementation": "plugin-durable-final-report-outbox-and-host-fallback",
+      "status": "packed-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/recovery.spec.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "e2e", "path": "tests/e2e/packed-web.spec.ts" }
+      ]
+    },
+    {
+      "id": "context-compaction-continuity",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native-plus-plugin-state-reinjection",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/service.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "session-search-and-retrieval",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "project-memory-and-notepad",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-storage-domain-plus-explicit-tools",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/memory.ts" },
+        { "kind": "source", "path": "src/tool-memory.ts" },
+        { "kind": "test", "path": "tests/unit/memory.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tool-memory.spec.ts" }
+      ]
+    },
+    {
+      "id": "repository-instruction-discovery",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native-agent-instructions-with-plugin-readiness-gate",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/doctor-config.ts" },
+        { "kind": "test", "path": "tests/unit/doctor-config.spec.ts" }
+      ]
+    },
+    {
+      "id": "conditional-rule-injection",
+      "source": ["oh-my-openagent"],
+      "implementation": "plugin-context-policy",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/prompt-rules.ts" },
+        { "kind": "test", "path": "tests/unit/prompt-rules.spec.ts" }
+      ]
+    },
+    {
+      "id": "file-based-agent-prompts",
+      "source": ["oh-my-openagent"],
+      "implementation": "plugin-config-loader",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/prompt-artifacts.ts" },
+        { "kind": "test", "path": "tests/unit/prompt-artifacts.spec.ts" }
+      ]
+    },
+    {
+      "id": "bundled-skill-catalog",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-on-dsh-skill-service",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/skills.ts" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "custom-skill-loading",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/skills.ts" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "custom-command-loading",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-on-dsh-command-service",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/custom-commands.ts" },
+        { "kind": "test", "path": "tests/unit/custom-commands.spec.ts" }
+      ]
+    },
+    {
+      "id": "skill-embedded-mcp",
+      "source": ["oh-my-openagent"],
+      "implementation": "strict-skill-metadata-to-agent-scoped-dsh-mcp-client",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/skill-mcp.ts" },
+        { "kind": "source", "path": "src/skills.ts" },
+        { "kind": "test", "path": "tests/unit/skill-mcp.spec.ts" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "mcp-discovery-and-lifecycle",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "agent-scoped-on-demand-dsh-mcp-client-with-autopilot-lifecycle",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/skill-mcp.ts" },
+        { "kind": "source", "path": "src/skills.ts" },
+        { "kind": "test", "path": "tests/unit/skill-mcp.spec.ts" },
+        { "kind": "test", "path": "tests/unit/skills.spec.ts" }
+      ]
+    },
+    {
+      "id": "lsp-navigation",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native-goto-reference-implementation-hover",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "doc", "path": "docs/parity-matrix.md" }
+      ]
+    },
+    {
+      "id": "ast-code-intelligence",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-ast-grep-search-and-stale-safe-rewrite",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/code-intelligence.ts" },
+        { "kind": "test", "path": "tests/unit/code-intelligence.spec.ts" }
+      ]
+    },
+    {
+      "id": "hash-anchored-edit",
+      "source": ["oh-my-openagent"],
+      "implementation": "plugin-whole-file-and-line-hash-cas-over-dsh-write-policy",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/code-intelligence.ts" },
+        { "kind": "test", "path": "tests/unit/code-intelligence.spec.ts" }
+      ]
+    },
+    {
+      "id": "file-and-code-search",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "web-search-and-fetch",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "interactive-terminal-jobs",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-runtime-composition-discovery-on-dsh-native",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "write-before-read-guard",
+      "source": ["oh-my-openagent"],
+      "implementation": "dsh-native-fs-observation-policy-with-plugin-readiness-gate",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/doctor-config.ts" },
+        { "kind": "test", "path": "tests/unit/doctor-config.spec.ts" }
+      ]
+    },
+    {
+      "id": "comment-and-slop-checker",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-required-fresh-code-quality-reviewer",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/evaluator.ts" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" }
+      ]
+    },
+    {
+      "id": "lifecycle-hook-extension",
+      "source": ["oh-my-codex", "oh-my-openagent", "deepseek-harness"],
+      "implementation": "plugin-typed-cordis-lifecycle-hook-registry",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/lifecycle-hooks.ts" },
+        { "kind": "test", "path": "tests/unit/lifecycle-hooks.spec.ts" }
+      ]
+    },
+    {
+      "id": "completion-notifications",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-durable-https-webhook-outbox",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/notification-service.ts" },
+        { "kind": "source", "path": "src/notification-state.ts" },
+        { "kind": "source", "path": "src/notification-store.ts" },
+        { "kind": "test", "path": "tests/unit/notification-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/notification-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/notification-store.spec.ts" }
+      ]
+    },
+    {
+      "id": "status-doctor-trace-resume-cancel",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/commands.spec.ts" },
+        { "kind": "test", "path": "tests/unit/doctor.spec.ts" },
+        { "kind": "test", "path": "tests/unit/doctor-config.spec.ts" }
+      ]
+    },
+    {
+      "id": "audit-export",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-command-bounded-text-or-json",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/commands.ts" },
+        { "kind": "test", "path": "tests/unit/commands.spec.ts" }
+      ]
+    },
+    {
+      "id": "visual-run-dashboard",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "plugin-read-only-durable-host-terminal-dashboard",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-dashboard.ts" },
+        { "kind": "source", "path": "src/run-dashboard-service.ts" },
+        { "kind": "test", "path": "tests/unit/run-dashboard.spec.ts" }
+      ]
+    },
+    {
+      "id": "host-only-dynamic-cordis-apply",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "plugin-wrapper-on-dsh-dynamic-runner",
+      "status": "packed-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" },
+        { "kind": "e2e", "path": "tests/e2e/packed-web.spec.ts" }
+      ]
+    },
+    {
+      "id": "dynamic-source-hash-audit",
+      "source": ["dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/dynamic-cordis.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" }
+      ]
+    },
+    {
+      "id": "dynamic-authority-policy-scan",
+      "source": ["dsh-autopilot"],
+      "implementation": "plugin-cooperative-policy-fence",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" }]
+    },
+    {
+      "id": "dynamic-health-inspection",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "plugin-wrapper-on-dsh-inspection",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" }]
+    },
+    {
+      "id": "dynamic-update-rollback",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" }]
+    },
+    {
+      "id": "dynamic-restart-rehydration",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" }]
+    },
+    {
+      "id": "dynamic-terminal-cleanup",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "dynamic-package-budget",
+      "source": ["dsh-autopilot"],
+      "implementation": "plugin",
+      "status": "unit-verified",
+      "evidence": [{ "kind": "test", "path": "tests/unit/service.spec.ts" }]
+    },
+    {
+      "id": "ai-slop-cleanup-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-bundled-workflow-plus-post-write-enforcement",
+      "status": "planned"
+    },
+    {
+      "id": "advisor-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "packaged-read-only-specialist-consultation-over-managed-fresh-subagents",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/specialist-catalog.ts" },
+        { "kind": "source", "path": "src/specialist-runner.ts" },
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-catalog.spec.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-runner.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "execution-pipeline-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-durable-phase-pipeline",
+      "status": "planned"
+    },
+    {
+      "id": "installation-setup-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-scoped-setup-and-readiness-refresh",
+      "status": "planned"
+    },
+    {
+      "id": "canonical-autopilot-fsm",
+      "source": ["oh-my-codex"],
+      "implementation": "durable-interview-planning-plan-review-execution-code-review-qa-state-machine",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-state.ts" },
+        { "kind": "source", "path": "src/run-store.ts" },
+        { "kind": "source", "path": "src/service.ts" },
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/run-store.spec.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "mission-queue-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "file-backed-sequential-managed-mission-queue-with-dry-run-status-resume-mark-rerun-and-audit",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/mission-state.ts" },
+        { "kind": "source", "path": "src/mission-store.ts" },
+        { "kind": "source", "path": "src/mission-service.ts" },
+        { "kind": "source", "path": "src/tool-mission.ts" },
+        { "kind": "source", "path": "src/commands.ts" },
+        { "kind": "test", "path": "tests/unit/mission-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/mission-store.spec.ts" },
+        { "kind": "test", "path": "tests/unit/mission-service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "test", "path": "tests/unit/commands.spec.ts" }
+      ]
+    },
+    {
+      "id": "plan-hardening-quorum",
+      "source": ["oh-my-codex"],
+      "implementation": "managed-metis-momus-oracle-pre-execution-gate",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/run-state.ts" },
+        { "kind": "source", "path": "src/service.ts" },
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/run-state.spec.ts" },
+        { "kind": "test", "path": "tests/unit/service.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "specialist-agent-catalog",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "packaged-omo-omx-personas-categories-and-managed-read-only-consultation",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/specialist-catalog.ts" },
+        { "kind": "source", "path": "src/specialist-runner.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-catalog.spec.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-runner.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "adversarial-qa-loop",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-scenario-matrix-and-bounded-fix-cycles",
+      "status": "planned"
+    },
+    {
+      "id": "visual-semantic-iteration",
+      "source": ["oh-my-codex"],
+      "implementation": "exact-pixel-qa-and-ralph-exist-but-are-not-yet-one-semantic-loop",
+      "status": "implementing"
+    },
+    {
+      "id": "visual-semantic-verdict",
+      "source": ["oh-my-codex"],
+      "implementation": "exact-pixel-receipt-without-vision-scored-structured-verdict",
+      "status": "implementing"
+    },
+    {
+      "id": "project-wiki",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-markdown-wiki-ingest-query-lint-refresh-and-cross-reference",
+      "status": "planned"
+    },
+    {
+      "id": "general-browser-automation",
+      "source": ["oh-my-openagent"],
+      "implementation": "bounded-visual-qa-actions-without-stateful-general-browser-provider",
+      "status": "implementing"
+    },
+    {
+      "id": "built-in-mcp-tier",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-built-in-websearch-context-docs-code-search-lsp-and-codegraph-servers",
+      "status": "planned"
+    },
+    {
+      "id": "claude-code-configuration-compatibility",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-claude-agents-skills-commands-mcp-settings-hooks-and-plugin-loader",
+      "status": "planned"
+    },
+    {
+      "id": "post-write-comment-checker",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-post-write-comment-policy-with-explicit-bypass",
+      "status": "planned"
+    },
+    {
+      "id": "frontend-design-workflow",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-frontend-persona-skill-and-browser-iteration",
+      "status": "planned"
+    },
+    {
+      "id": "hyperplan-workflow",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-pre-execution-hostile-plan-review-roster",
+      "status": "planned"
+    },
+    {
+      "id": "hierarchical-instruction-generator",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-bounded-hierarchical-agents-md-generator",
+      "status": "planned"
+    },
+    {
+      "id": "message-intent-router",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-human-message-intent-classification-and-safe-mode-routing",
+      "status": "planned"
+    },
+    {
+      "id": "full-lsp-tool-suite",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native-definition-references-implementation-hover-only; diagnostics-symbols-prepare-rename-and-rename-missing",
+      "status": "native-limited"
+    },
+    {
+      "id": "model-setup-resolution",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-provider-discovery-effective-agent-and-category-model-resolution",
+      "status": "planned"
+    },
+    {
+      "id": "image-pdf-diagram-analysis",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native-image-tool-discovery-without-pdf-diagram-specialist-workflow",
+      "status": "native-limited"
+    },
+    {
+      "id": "refactor-workflow",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-scoped-lsp-ast-architecture-and-tdd-refactor-workflow",
+      "status": "planned"
+    },
+    {
+      "id": "session-transcript-recovery",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-missing-tool-thinking-empty-json-and-context-window-transcript-repair",
+      "status": "planned"
+    },
+    {
+      "id": "authorized-start-work-delivery",
+      "source": ["oh-my-openagent"],
+      "implementation": "durable-worktree-and-delivery-plan-without-authorized-commit-push-pr-ci-review-or-merge-execution",
+      "status": "implementing"
+    },
+    {
+      "id": "team-member-worktrees",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "planned-per-member-worktree-cwd-branch-integration-and-cleanup",
+      "status": "planned"
+    },
+    {
+      "id": "persistent-terminal-manager",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "dsh-native-job-discovery-without-persistent-terminal-pane-manager",
+      "status": "native-limited"
+    },
+    {
+      "id": "todo-idle-continuation",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "planned-dsh-todo-projection-and-idle-continuation-gate",
+      "status": "planned"
+    },
+    {
+      "id": "live-team-visualization",
+      "source": ["oh-my-openagent"],
+      "implementation": "one-shot-host-terminal-dashboard-without-live-member-stream-or-client-panel",
+      "status": "implementing"
+    },
+    {
+      "id": "assembled-analysis-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-packaged-analysis-persona-over-real-search-lsp-and-ast-tools",
+      "status": "planned"
+    },
+    {
+      "id": "goal-linked-research-mission",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-goal-revision-bound-research-state-and-evaluator",
+      "status": "planned"
+    },
+    {
+      "id": "assembled-best-practice-research",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-official-source-first-research-artifact-workflow",
+      "status": "planned"
+    },
+    {
+      "id": "explicit-code-review-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "bundled-policy-and-completion-reviewer-without-standalone-assembled-review-flow",
+      "status": "implementing"
+    },
+    {
+      "id": "notification-configuration-utility",
+      "source": ["oh-my-codex"],
+      "implementation": "durable-deployment-webhook-outbox-without-user-scoped-provider-template-configuration",
+      "status": "implementing"
+    },
+    {
+      "id": "durable-deep-interview",
+      "source": ["oh-my-codex"],
+      "implementation": "durable-summary-decisions-open-questions-pre-plan-gate-without-interactive-question-answer-ledger",
+      "status": "implementing"
+    },
+    {
+      "id": "executable-design-document-workflow",
+      "source": ["oh-my-codex"],
+      "implementation": "bundled-guidance-without-assembled-document-generation-and-validation",
+      "status": "implementing"
+    },
+    {
+      "id": "git-history-delivery-workflow",
+      "source": ["oh-my-codex", "oh-my-openagent"],
+      "implementation": "bundled-git-policy-and-delivery-argv-plan-without-authorized-commit-rebase-push-execution",
+      "status": "implementing"
+    },
+    {
+      "id": "live-runtime-hud",
+      "source": ["oh-my-codex"],
+      "implementation": "read-only-host-watch-api-and-one-shot-command-without-user-started-live-client-surface",
+      "status": "implementing"
+    },
+    {
+      "id": "plugin-scoped-mcp-companions",
+      "source": ["oh-my-codex"],
+      "implementation": "skill-mcp-runtime-without-shipped-companion-server-definitions",
+      "status": "implementing"
+    },
+    {
+      "id": "measured-performance-loop",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-baseline-metric-candidate-keep-policy-and-restart-state",
+      "status": "planned"
+    },
+    {
+      "id": "durable-strategic-planning",
+      "source": ["oh-my-codex"],
+      "implementation": "bundled-planning-guidance-without-durable-plan-artifact-runtime",
+      "status": "implementing"
+    },
+    {
+      "id": "runtime-consensus-planning",
+      "source": ["oh-my-codex"],
+      "implementation": "planned-architect-then-critic-independent-receipt-gate",
+      "status": "planned"
+    },
+    {
+      "id": "bounded-shell-workflow",
+      "source": ["oh-my-codex", "deepseek-harness"],
+      "implementation": "native-shell-and-job-primitives-without-assembled-sparkshell-policy-flow",
+      "status": "native-limited"
+    },
+    {
+      "id": "continuable-team-execution",
+      "source": ["oh-my-codex", "deepseek-harness"],
+      "implementation": "durable-parent-child-team-runtime-without-final-packed-lifecycle-proof",
+      "status": "implementing"
+    },
+    {
+      "id": "team-compaction-continuity",
+      "source": ["oh-my-codex", "deepseek-harness"],
+      "implementation": "generic-run-reinjection-without-team-preflight-worker-split-checklist-artifact",
+      "status": "implementing"
+    },
+    {
+      "id": "team-worker-protocol",
+      "source": ["oh-my-codex"],
+      "implementation": "parent-child-fifo-and-structured-report-without-peer-ack-and-claim-protocol",
+      "status": "implementing"
+    },
+    {
+      "id": "cross-lane-model-fallbacks",
+      "source": ["oh-my-openagent"],
+      "implementation": "task-and-reviewer-infrastructure-fallback-without-root-team-ralph-workflow-runtime-chains",
+      "status": "implementing"
+    },
+    {
+      "id": "named-agent-tool-policies",
+      "source": ["oh-my-openagent"],
+      "implementation": "catalogued-read-only-consultation-policy-plus-managed-worker-reviewer-filters-without-full-role-permission-matrix",
+      "status": "implementing",
+      "evidence": [
+        { "kind": "source", "path": "src/specialist-catalog.ts" },
+        { "kind": "source", "path": "src/specialist-runner.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-runner.spec.ts" }
+      ]
+    },
+    {
+      "id": "multi-language-ast-tools",
+      "source": ["oh-my-openagent"],
+      "implementation": "ast-grep-search-and-rewrite-for-css-html-javascript-typescript-and-tsx-only",
+      "status": "implementing"
+    },
+    {
+      "id": "general-background-agent-surface",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "autopilot-dag-bound-continuable-team-without-general-run-in-background-output-surface",
+      "status": "implementing"
+    },
+    {
+      "id": "built-in-category-catalog",
+      "source": ["oh-my-openagent"],
+      "implementation": "eight-category-specialist-recommendation-catalog-without-full-model-prompt-skill-policy-resolution",
+      "status": "implementing",
+      "evidence": [
+        { "kind": "source", "path": "src/specialist-catalog.ts" },
+        { "kind": "test", "path": "tests/unit/specialist-catalog.spec.ts" }
+      ]
+    },
+    {
+      "id": "assembled-code-search",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "native-glob-and-grep-discovery-without-stock-profile-assembled-proof",
+      "status": "native-limited"
+    },
+    {
+      "id": "claude-compatible-conditional-rules",
+      "source": ["oh-my-openagent"],
+      "implementation": "single-explicit-markdown-directory-without-mdc-always-apply-home-and-project-layering",
+      "status": "implementing"
+    },
+    {
+      "id": "multi-root-custom-command-loading",
+      "source": ["oh-my-openagent"],
+      "implementation": "single-explicit-directory-without-project-user-opencode-claude-precedence",
+      "status": "implementing"
+    },
+    {
+      "id": "multi-root-custom-skill-loading",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "bundled-autopilot-skills-plus-dsh-native-discovery-without-omo-root-precedence-and-toggles",
+      "status": "implementing"
+    },
+    {
+      "id": "full-runtime-doctor",
+      "source": ["oh-my-openagent", "dsh-autopilot"],
+      "implementation": "bundle-and-core-readiness-doctor-without-agent-category-mcp-claude-and-browser-effective-diagnostics",
+      "status": "implementing"
+    },
+    {
+      "id": "agent-category-file-prompts",
+      "source": ["oh-my-openagent"],
+      "implementation": "generic-safe-markdown-loader-without-agent-category-prompt-and-prompt-append-wiring",
+      "status": "implementing"
+    },
+    {
+      "id": "composed-hook-compatibility",
+      "source": ["oh-my-openagent"],
+      "implementation": "seven-autopilot-hook-points-without-omo-message-transform-parameter-context-slot-coverage",
+      "status": "implementing"
+    },
+    {
+      "id": "three-tier-mcp-lifecycle",
+      "source": ["oh-my-openagent"],
+      "implementation": "skill-id-to-deployment-server-lifecycle-without-built-in-and-claude-mcp-json-tiers",
+      "status": "implementing"
+    },
+    {
+      "id": "background-idle-notifications",
+      "source": ["oh-my-openagent"],
+      "implementation": "disabled-by-default-completion-https-outbox-without-background-idle-os-notifications",
+      "status": "implementing"
+    },
+    {
+      "id": "explicit-review-workflow",
+      "source": ["oh-my-openagent"],
+      "implementation": "completion-review-quorum-without-standalone-review-work-invocation-and-context-mining",
+      "status": "implementing"
+    },
+    {
+      "id": "assembled-session-tool-suite",
+      "source": ["oh-my-openagent", "deepseek-harness"],
+      "implementation": "native-tool-name-discovery-without-stock-profile-list-read-search-info-composition",
+      "status": "native-limited"
+    },
+    {
+      "id": "skill-declared-mcp-servers",
+      "source": ["oh-my-openagent"],
+      "implementation": "skill-server-id-references-to-deployment-allowlist-without-inline-command-url-oauth-schema",
+      "status": "implementing"
+    },
+    {
+      "id": "global-continuation-stop",
+      "source": ["oh-my-openagent"],
+      "implementation": "autopilot-owned-goal-team-ralph-workflow-stop-without-dsh-todo-and-external-continuation-sweep",
+      "status": "implementing"
+    },
+    {
+      "id": "shared-team-mailbox-protocol",
+      "source": ["oh-my-openagent"],
+      "implementation": "parent-child-fifo-report-without-peer-broadcast-deferred-ack-and-shutdown-handshake",
+      "status": "implementing"
+    },
+    {
+      "id": "lead-member-team-mode",
+      "source": ["oh-my-openagent"],
+      "implementation": "continuable-per-task-workers-without-named-team-roster-task-crud-and-shutdown-lifecycle",
+      "status": "implementing"
+    },
+    {
+      "id": "automatic-ultrawork-mode",
+      "source": ["oh-my-openagent"],
+      "implementation": "bundled-guidance-and-managed-primitives-without-message-triggered-mode-state-and-all-agent-plan",
+      "status": "implementing"
+    },
+    {
+      "id": "durable-multi-goal-loop",
+      "source": ["oh-my-openagent"],
+      "implementation": "single-dsh-goal-with-task-dag-without-multiple-goal-add-list-switch-and-evidence-ledger",
+      "status": "implementing"
+    },
+    {
+      "id": "evidence-saturated-research",
+      "source": ["oh-my-openagent"],
+      "implementation": "planned-recursive-claim-graph-observation-manifest-and-independent-convergence-workflow",
+      "status": "planned"
+    },
+    {
+      "id": "client-cordis-native-approval",
+      "source": ["deepseek-harness", "dsh-autopilot"],
+      "implementation": "dsh-native-no-bypass",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/tools.ts" },
+        { "kind": "test", "path": "tests/unit/dynamic-cordis.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" }
+      ]
+    },
+    {
+      "id": "permission-non-escalation",
+      "source": ["oh-my-openagent", "deepseek-harness", "dsh-autopilot"],
+      "implementation": "dsh-native-permissions-plus-role-tool-filters-and-managed-start-guard",
+      "status": "unit-verified",
+      "evidence": [
+        { "kind": "source", "path": "src/managed-subagents.ts" },
+        { "kind": "source", "path": "src/evaluator.ts" },
+        { "kind": "test", "path": "tests/unit/managed-subagents.spec.ts" },
+        { "kind": "test", "path": "tests/unit/evaluator.spec.ts" },
+        { "kind": "test", "path": "tests/unit/tools.spec.ts" },
+        { "kind": "doc", "path": "docs/autonomy-and-security.md" }
+      ]
+    },
+    {
+      "id": "arbitrary-client-approval-bypass",
+      "source": ["dsh-autopilot"],
+      "implementation": "rejected",
+      "status": "unsupported",
+      "unsupportedCategory": "security-policy",
+      "reason": "Client-bearing Cordis remains under DSH's native human approval because an autonomy lease cannot expand authority."
+    },
+    {
+      "id": "unbounded-never-stop-mode",
+      "source": ["dsh-autopilot"],
+      "implementation": "rejected",
+      "status": "unsupported",
+      "unsupportedCategory": "security-policy",
+      "reason": "Every run retains explicit revocation, finite resource ceilings, and terminal failure states; unlimited autonomy would remove the human authorization boundary."
+    }
+  ]
+}

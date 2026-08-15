@@ -1,16 +1,18 @@
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import { execFileSync, spawn } from 'node:child_process'
-import { mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync } from 'node:fs'
+import { mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { dirname, join } from 'node:path'
+import { delimiter, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { chromium, type Browser, type Page } from 'playwright'
 import { afterEach, describe, expect, it, onTestFailed } from 'vitest'
+import { parseDocument } from 'yaml'
+import { PRIMARY_REPLAY, childReplayJsonls } from './replay-fixture.ts'
 
 const REPO_ROOT = fileURLToPath(new URL('../..', import.meta.url))
+const BUNDLE_PATCH = join(REPO_ROOT, 'cordis.patch.yml')
 const OVERLAY = join(REPO_ROOT, 'tests/e2e/replay.cordis.yml')
-const OVERRIDE = join(REPO_ROOT, 'tests/e2e/fixtures/replay.override.json')
 const UNUSED_FIXTURE = join(REPO_ROOT, 'tests/e2e/fixtures/unused.session.jsonl')
 const require = createRequire(import.meta.url)
 const DSH_PACKAGE = require.resolve('@deepseek-ai/dsh/package.json')
@@ -31,9 +33,83 @@ interface ProcessHandle {
   readonly output: { text: string }
 }
 
+interface StaticPluginRow {
+  readonly id: string
+  readonly name: string
+}
+
 let activeProcess: ProcessHandle | undefined
 let activeBrowser: Browser | undefined
 let temporaryRoot: string | undefined
+
+/** Return whether a decoded YAML value is a mapping. */
+function isRecord(value: unknown): value is Readonly<Record<string, unknown>> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/** Decode one YAML document and reject structural or parser errors. */
+function parseYamlSequence(source: string, label: string): readonly unknown[] {
+  const document = parseDocument(source, { strict: true })
+  if (document.errors.length > 0) {
+    throw new Error(`${label}: ${document.errors[0]!.message}`)
+  }
+  const value: unknown = document.toJS()
+  if (!Array.isArray(value)) throw new Error(`${label}: expected a top-level sequence`)
+  return value
+}
+
+/** Extract every statically named plugin row inserted by the shipped bundle patch. */
+function bundledStaticRows(): readonly StaticPluginRow[] {
+  const operations = parseYamlSequence(readFileSync(BUNDLE_PATCH, 'utf8'), 'bundle patch')
+  const rows = operations.flatMap((operation, operationIndex) => {
+    if (!isRecord(operation)) {
+      throw new Error(`bundle patch: operation ${operationIndex + 1} is not a mapping`)
+    }
+    const insert = operation['insert']
+    if (insert === undefined) return []
+    if (!Array.isArray(insert)) {
+      throw new Error(`bundle patch: operation ${operationIndex + 1} insert is not a sequence`)
+    }
+    return insert.map((value, rowIndex): StaticPluginRow => {
+      if (!isRecord(value)) {
+        throw new Error(`bundle patch: inserted row ${rowIndex + 1} is not a mapping`)
+      }
+      const id = value['id']
+      const name = value['name']
+      if (typeof id !== 'string' || typeof name !== 'string') {
+        throw new Error(`bundle patch: inserted row ${rowIndex + 1} needs static string id and name`)
+      }
+      return Object.freeze({ id, name })
+    })
+  })
+  if (rows.length === 0) throw new Error('bundle patch: no static plugin rows found')
+  if (new Set(rows.map(row => row.id)).size !== rows.length) {
+    throw new Error('bundle patch: static plugin ids must be unique')
+  }
+  if (new Set(rows.map(row => row.name)).size !== rows.length) {
+    throw new Error('bundle patch: static plugin module names must be unique')
+  }
+  return Object.freeze(rows)
+}
+
+/** Decode the resolved Loader profile into semantic id/name pairs. */
+function resolvedPluginRows(source: string): readonly Partial<StaticPluginRow>[] {
+  return parseYamlSequence(source, 'dump-config').map((value, index) => {
+    if (!isRecord(value)) throw new Error(`dump-config: row ${index + 1} is not a mapping`)
+    const id = value['id']
+    const name = value['name']
+    if (id !== undefined && typeof id !== 'string') {
+      throw new Error(`dump-config: row ${index + 1} has a non-string id`)
+    }
+    if (name !== undefined && typeof name !== 'string') {
+      throw new Error(`dump-config: row ${index + 1} has a non-string module name`)
+    }
+    return {
+      ...(id === undefined ? {} : { id }),
+      ...(name === undefined ? {} : { name }),
+    }
+  })
+}
 
 /** Execute the locally linked DSH CLI with an isolated profile home. */
 function dsh(args: readonly string[], env: NodeJS.ProcessEnv, cwd = REPO_ROOT): string {
@@ -120,7 +196,7 @@ async function stopWeb(handle: ProcessHandle): Promise<void> {
   }
 }
 
-/** Poll history until the complete two-round run and its user-facing handoff are durable. */
+/** Poll history until the repair round and verified user-facing handoff are durable. */
 async function waitForCompletion(baseUrl: string, sessionId: string, output: { text: string }): Promise<RpcHistory> {
   const deadline = Date.now() + 90_000
   let latest: RpcHistory | undefined
@@ -132,10 +208,12 @@ async function waitForCompletion(baseUrl: string, sessionId: string, output: { t
       && (event.data as { operation?: unknown }).operation === 'complete')
     const turns = events.filter(event => event.type === 'turn/end').length
     const steps = events.filter(event => event.type === 'step/start').length
-    if (complete && turns >= 2 && steps >= 10) return latest
+    const finalFeedback = events.some(event => event.type === 'assistant/message'
+      && assistantText(event)?.startsWith('Autopilot completed successfully.'))
+    if (complete && finalFeedback && turns >= 3 && steps >= 14) return latest
     await new Promise(resolve => setTimeout(resolve, 200))
   }
-  throw new Error(`Autopilot did not finish two rounds and ten steps:\n${JSON.stringify(latest, null, 2)}\n${output.text}`)
+  throw new Error(`Autopilot did not finish its repair round and final handoff:\n${JSON.stringify(latest, null, 2)}\n${output.text}`)
 }
 
 /** Extract the model-facing text returned by one tool result event. */
@@ -146,6 +224,13 @@ function toolResultText(event: RpcHistory['events'][number]['event']): string | 
   }).message?.content
   return content?.flatMap(block => block.content ?? [])
     .find(block => block.type === 'text')?.text
+}
+
+/** Extract the opaque call id correlated with one authoritative tool result. */
+function toolResultCallId(event: RpcHistory['events'][number]['event']): string | undefined {
+  if (event.type !== 'tool/result' || typeof event.data !== 'object' || event.data === null) return undefined
+  const source = (event.data as { message?: { source?: { callId?: unknown } } }).message?.source
+  return typeof source?.callId === 'string' ? source.callId : undefined
 }
 
 /** Extract ordinary text from one durable assistant message. */
@@ -167,7 +252,11 @@ function filesBelow(root: string): string[] {
 /** Connect one exact project directory through the real Web workspace picker. */
 async function connectWorkspace(page: Page, root: string, name: string): Promise<void> {
   const welcome = page.getByRole('button', { name: /^(?:Continue|继续)$/u })
-  if (await welcome.count() > 0) await welcome.click()
+  await welcome.waitFor({ state: 'visible', timeout: 5_000 }).catch(() => undefined)
+  if (await welcome.isVisible()) {
+    await welcome.click()
+    await welcome.waitFor({ state: 'hidden', timeout: 15_000 })
+  }
   await page.getByRole('button', { name: /^(?:Add workspace|添加工作区)$/u }).click()
   const dialog = page.getByRole('dialog', { name: /^(?:Select Workspace Directory|选择工作区目录)$/u })
   await dialog.waitFor({ timeout: 15_000 })
@@ -207,15 +296,22 @@ afterEach(async () => {
 })
 
 describe('packed bundle in a real DSH Web profile', () => {
-  it('installs, runs a Host-only Cordis extension, verifies two rounds, and persists completion', async () => {
+  it('runs managed Cordis, repairs a failed verification, and persists the final handoff', async () => {
     temporaryRoot = mkdtempSync(join(tmpdir(), 'dsh-autopilot-e2e-'))
     const dist = join(temporaryRoot, 'dist')
     const dshHome = join(temporaryRoot, 'dsh-home')
     const agentsHome = join(temporaryRoot, 'agents-home')
     const sessions = join(temporaryRoot, 'sessions')
     const workspace = join(temporaryRoot, 'workspace')
+    const replayOverride = join(temporaryRoot, 'replay.override.json')
+    const childReplayContents = childReplayJsonls()
+    const childReplays = childReplayContents.map((_, index) => join(dirname(replayOverride), `child-${index + 1}.session.jsonl`))
     mkdirSync(dist)
     mkdirSync(workspace)
+    writeFileSync(replayOverride, `${JSON.stringify(PRIMARY_REPLAY, null, 2)}\n`, 'utf8')
+    for (const [index, content] of childReplayContents.entries()) {
+      writeFileSync(childReplays[index]!, content, 'utf8')
+    }
 
     execFileSync('pnpm', ['run', 'build'], { cwd: REPO_ROOT, stdio: 'pipe' })
     execFileSync('pnpm', ['pack', '--pack-destination', dist], { cwd: REPO_ROOT, stdio: 'pipe' })
@@ -226,8 +322,15 @@ describe('packed bundle in a real DSH Web profile', () => {
     const profileEnv = { ...process.env, DSH_HOME: dshHome, DSH_AGENTS_HOME: agentsHome }
     dsh(['plugin', '--profile', 'web', 'add', tarball, REPLAY_PACKAGE], profileEnv, workspace)
     const dumped = dsh(['--profile', 'web', '--dump-config'], profileEnv, workspace)
-    for (const id of ['dsh-autopilot-service', 'dsh-autopilot-commands', 'dsh-autopilot-tools', 'dsh-autopilot-skills']) {
-      expect(dumped.match(new RegExp(`(?:^|\\n)\\s*(?:- )?id: ${id}(?:\\n|$)`, 'gu'))).toHaveLength(1)
+    const expectedRows = bundledStaticRows()
+    const dumpedRows = resolvedPluginRows(dumped)
+    for (const expected of expectedRows) {
+      expect(dumpedRows.filter(row => row.id === expected.id)).toEqual([
+        expect.objectContaining(expected),
+      ])
+      expect(dumpedRows.filter(row => row.name === expected.name)).toEqual([
+        expect.objectContaining(expected),
+      ])
     }
 
     const doctor = dsh(
@@ -250,7 +353,8 @@ describe('packed bundle in a real DSH Web profile', () => {
           ...profileEnv,
           DSH_PERMISSION_MODE: 'workspace-write',
           DSH_SNAPSHOT_FILE: UNUSED_FIXTURE,
-          DSH_SNAPSHOT_OVERRIDE: OVERRIDE,
+          DSH_SNAPSHOT_OVERRIDE: replayOverride,
+          DSH_SNAPSHOT_CHILD_FILES: childReplays.join(delimiter),
           DSH_AUTOPILOT_E2E_SESSIONS: sessions,
           DSH_AUTOPILOT_E2E_VERIFY: verifyCommand,
         },
@@ -275,24 +379,32 @@ describe('packed bundle in a real DSH Web profile', () => {
       agentPreset: 'cordis',
     })).toEqual({ agentPreset: 'cordis' })
     const input = page.locator('textarea:enabled').first()
-    await input.fill('/autopilot start --rounds 8 --duration 7d Create, run, and clean up a Host-only Cordis proof tool, then create and verify the E2E proof artifact.')
+    await input.fill('/autopilot start --rounds 8 --duration 7d Use the managed Host-only Cordis lifecycle, create the proof artifact, repair verifier findings, and finish with a concrete user-facing summary.')
     await input.press('Enter')
 
     const history = await waitForCompletion(baseUrl, sessionId, handle.output)
     const events = history.events.map(item => item.event)
     expect(readFileSync(join(workspace, 'e2e-proof.txt'), 'utf8')).toBe('DSH_AUTOPILOT_E2E\n')
-    expect(events.filter(event => event.type === 'step/start')).toHaveLength(10)
-    expect(events.filter(event => event.type === 'turn/end')).toHaveLength(2)
+    expect(events.filter(event => event.type === 'step/start')).toHaveLength(17)
+    expect(events.filter(event => event.type === 'turn/end')).toHaveLength(3)
     expect(events.flatMap(event => event.type === 'tool/call'
       ? [(event.data as { name: string }).name]
       : [])).toEqual([
-      'cordis_define',
-      'cordis_run',
-      'autopilot_host_probe',
-      'get_autopilot',
-      'cordis_stop',
-      'cordis_undefine',
+      'autopilot_flow',
+      'autopilot_plan',
+      'autopilot_flow',
+      'autopilot_task',
+      'autopilot_cordis_apply',
+      'managed_host_probe',
+      'autopilot_cordis_remove',
       'write',
+      'autopilot_task',
+      'autopilot_verify',
+      'autopilot_plan',
+      'autopilot_flow',
+      'autopilot_task',
+      'write',
+      'autopilot_task',
       'autopilot_verify',
     ])
     expect(events.flatMap(event => event.type === 'user/message'
@@ -306,50 +418,76 @@ describe('packed bundle in a real DSH Web profile', () => {
     } | undefined)?.source?.entries).toContainEqual(expect.objectContaining({ name: 'autonomous-development' }))
     expect(events.filter(event => event.type === 'tool/result'
       && typeof event.data === 'object' && event.data !== null && 'error' in event.data)).toEqual([])
-    const statusPayload = events.map(toolResultText)
-      .find(text => text?.includes('"dynamicPackages": 1'))
-    expect(statusPayload).toBeDefined()
-    expect(JSON.parse(statusPayload!)).toMatchObject({
-      lease: { dynamicPackages: 1, selfModification: 'host-only' },
+    const resultFor = (callId: string): string | undefined => {
+      const event = events.find(candidate => toolResultCallId(candidate) === callId)
+      return event === undefined ? undefined : toolResultText(event)
+    }
+    expect(JSON.parse(resultFor('call_cordis_apply')!)).toMatchObject({
+      logicalId: 'managed-proof', status: 'running', recovered: false,
     })
-    expect(events.map(toolResultText)).toEqual(expect.arrayContaining([
-      expect.stringContaining('Defined proof-1/pkg-1'),
-      expect.stringContaining('proof-1/pkg-1 is running'),
-      'HOST_ONLY:receipt-ok',
-      expect.stringContaining('Dynamic Plugin proof-1 is stopped'),
-      expect.stringContaining('Removed dynamic Plugin proof-1'),
-    ]))
-    const verifierPayload = events.map(toolResultText)
-      .find(text => text?.includes('"verdict": "pass"'))
-    expect(verifierPayload).toBeDefined()
-    expect(JSON.parse(verifierPayload!)).toMatchObject({ verdict: 'pass' })
+    expect(resultFor('call_host_probe')).toBe('MANAGED_HOST:receipt-ok')
+    expect(JSON.parse(resultFor('call_cordis_remove')!)).toMatchObject({
+      lease: {
+        dynamicPackages: 1,
+        selfModification: 'host-only',
+        dynamicExtensions: [{ logicalId: 'managed-proof', status: 'removed' }],
+      },
+    })
+    const failedVerification = JSON.parse(resultFor('call_verify_fail')!) as {
+      verdict: string; checks: Array<{ name: string; passed: boolean }>; next: string
+    }
+    expect(failedVerification).toMatchObject({
+      verdict: 'fail',
+      checks: [{ name: 'e2e-artifact', passed: false }],
+      next: expect.stringContaining('repair'),
+    })
+    const passedVerification = JSON.parse(resultFor('call_verify_pass')!) as {
+      verdict: string
+      checks: Array<{ name: string; passed: boolean }>
+      reviewers: Array<{ role: string; verdict: string }>
+    }
+    expect(passedVerification).toMatchObject({
+      verdict: 'pass',
+      checks: [{ name: 'e2e-artifact', passed: true }],
+      reviewers: [{ role: 'acceptance-reviewer', verdict: 'pass' }],
+    })
 
     const commandRun = events.find(event => event.type === 'command/run')
     expect(commandRun?.data).toMatchObject({ name: 'autopilot', source: { kind: 'user' } })
-    const verifyCall = events.find(event => event.type === 'tool/call'
+    const verifyCalls = events.filter(event => event.type === 'tool/call'
       && (event.data as { name?: unknown }).name === 'autopilot_verify')
     const complete = events.find(event => event.type === 'goal/change'
       && (event.data as { operation?: unknown }).operation === 'complete')
-    const verifyResult = events.find(event => event.type === 'tool/result'
-      && toolResultText(event)?.includes('"verdict": "pass"'))
+    const failedResult = events.find(event => toolResultCallId(event) === 'call_verify_fail')
+    const passedResult = events.find(event => toolResultCallId(event) === 'call_verify_pass')
     const finalReply = events.find(event => event.type === 'assistant/message'
       && assistantText(event)?.startsWith('Autopilot completed successfully.'))
-    expect(verifyCall!.seq).toBeLessThan(complete!.seq)
-    expect(complete!.seq).toBeLessThan(verifyResult!.seq)
-    expect(verifyResult!.seq).toBeLessThan(finalReply!.seq)
-    expect(assistantText(finalReply!)).toContain('deployment-fixed verification passed')
+    expect(verifyCalls).toHaveLength(2)
+    expect(verifyCalls[0]!.seq).toBeLessThan(failedResult!.seq)
+    expect(failedResult!.seq).toBeLessThan(verifyCalls[1]!.seq)
+    expect(verifyCalls[1]!.seq).toBeLessThan(complete!.seq)
+    expect(complete!.seq).toBeLessThan(passedResult!.seq)
+    expect(passedResult!.seq).toBeLessThan(finalReply!.seq)
+    expect(assistantText(finalReply!)).toContain('failed first candidate was repaired')
+    expect(assistantText(finalReply!)).toContain('fresh independent review passed')
 
     await stopWeb(handle)
     activeProcess = undefined
     await activeBrowser.close()
     activeBrowser = undefined
     const logs = filesBelow(sessions).filter(file => file.endsWith('session.jsonl'))
-    expect(logs).toHaveLength(1)
-    const persisted = readFileSync(logs[0]!, 'utf8').trim().split('\n').map(line => JSON.parse(line) as {
+    expect(logs.length).toBeGreaterThanOrEqual(9)
+    const persistedLogs = logs.map(file => readFileSync(file, 'utf8').trim().split('\n').map(line => JSON.parse(line) as {
       type: string
       data?: { operation?: string; name?: string }
-    })
+    }))
+    const persisted = persistedLogs.find(records => records
+      .some(event => event.type === 'command/run' && event.data?.name === 'autopilot'))
+    expect(persisted).toBeDefined()
+    if (persisted === undefined) throw new Error('parent session persistence log is missing')
     expect(persisted.some(event => event.type === 'goal/change' && event.data?.operation === 'complete')).toBe(true)
     expect(persisted.some(event => event.type === 'command/run' && event.data?.name === 'autopilot')).toBe(true)
+    expect(persisted.some(event => event.type === 'assistant/message'
+      && JSON.stringify(event.data).includes('Autopilot completed successfully.'))).toBe(true)
   })
 })

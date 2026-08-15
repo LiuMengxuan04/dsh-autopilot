@@ -16,30 +16,33 @@ When `/autopilot start` invokes this skill, the human command has already create
 If no active lease exists, state the exact command the human should run, for example:
 
 ```text
-/autopilot start --rounds 256 --duration 7d <testable objective>
+/autopilot start --rounds 1024 --duration 7d <testable objective>
 ```
 
 Wait for the human command. Never simulate authorization, invoke a human command through a model tool, or infer a lease from a durable Goal.
 
-If a Goal is durable but the lease is absent or paused after restart, summarize the observable state and ask the human to run `/autopilot resume` with an appropriate duration.
+If a Goal is durable but the lease is paused, revoked, exhausted, or waiting for reconciliation, summarize the observable state and ask the human to choose the next lifecycle command. A deployment-authorized crash recovery may rearm a still-running lease automatically; never infer recovery from the Goal alone.
 
 ## Execute the Goal
 
 1. Inspect repository instructions, current changes, relevant architecture, and available checks.
-2. Restate the objective as concrete acceptance criteria without narrowing the user's request.
-3. Preserve unrelated user changes and secrets. Keep all work inside the authorized workspace and existing DSH permission mode.
-4. Implement the smallest coherent increment that advances an acceptance criterion.
-5. Run the narrowest useful check, inspect the actual result, and repair failures before expanding scope.
-6. Re-read `get_autopilot` at meaningful milestones and before expensive work. Respect remaining rounds, active time, verification attempts, and dynamic-Package budget.
-7. Continue across Goal rounds until every acceptance criterion has inspectable evidence.
+2. Inspect `get_autopilot.verificationBaseline`. Project recipes and relevant root-manifest hashes are frozen before this first model step. If the objective requires changing a frozen `package.json`, `pyproject.toml`, `Cargo.toml`, or `go.mod`, stop and explain that the human must start a newly configured run with auto-discovery disabled and deployment-fixed checks; the current baseline cannot be rewritten by the model.
+3. Classify the run as implementation, investigation, repair, performance, delivery, or planning, then restate the objective as concrete acceptance criteria without narrowing the user's request. Freeze that intent in the first `autopilot_plan` replacement; later task additions cannot silently change it.
+4. Preserve unrelated user changes and secrets. Keep all work inside the authorized workspace and existing DSH permission mode.
+5. Implement the smallest coherent increment that advances an acceptance criterion.
+6. Run the narrowest useful check, inspect the actual result, and repair failures before expanding scope.
+7. Re-read `get_autopilot` at meaningful milestones and before expensive work. Respect remaining rounds, active time, verification attempts, and dynamic-Package budget.
+8. Continue across Goal rounds until every acceptance criterion has inspectable evidence.
+
+Use `autopilot_memory` only for durable project facts that will help a later run. Reads are explicit and may be stale; verify them against the repository before acting. Writes require the current authorization and must not contain credentials, private user data, hidden reasoning, or unnecessary raw command output.
 
 Do not stop merely because one model turn ends. Do stop for a missing human decision, exhausted authorization, destructive action outside the request, unavailable credential, or external approval that cannot be obtained safely.
 
 ## Extend Cordis only when needed
 
-Prefer installed DSH capabilities. Dynamic Cordis requires the current DSH Agent preset to provide `cordis_define` and `cordis_run`; recommend the shipped `cordis` preset when the user needs this capability. Do not imply that DSH Autopilot adds those tools to another preset.
+Prefer installed DSH capabilities. During a Host-only run, use `autopilot_cordis_apply` and `autopilot_cordis_remove`. These tools own the durable source hash, Package budget, activation inspection, update rollback, restart rehydration, and terminal cleanup. Do not call native `cordis_define`, `cordis_run`, `cordis_stop`, or `cordis_undefine` under this policy.
 
-Define a dynamic Cordis Package only when it materially enables the current Goal and the active lease permits it.
+Define a dynamic Cordis Package only when it materially enables the current Goal, the active lease permits it, and the deployment exposes DSH's Host runner. Give it a stable lowercase `logicalId`; later versions reuse that identity.
 
 For a Host Package that contributes a model tool, use the current DSH runtime form below. `execute` is a sibling of `output`; `output` must declare `schema` and `render`. Register through an effect so unload removes the tool.
 
@@ -68,9 +71,9 @@ return {
 
 Keep the output schema aligned with the value returned by `execute`. Do not replace the `output` declaration with a bare schema or place `execute` inside `output`.
 
-Under `host-only`, omit Client code and activate only the exact Package successfully defined in this lease. No additional DSH Autopilot approval is required for that eligible Host-only path, but it grants no additional authority. Treat the Cordis VM as an execution mechanism, not a sandbox. Do not use self-extension to widen filesystem, shell, network, credential, approval, or deployment permissions.
+Under `host-only`, pass only the Host function body to `autopilot_cordis_apply`. The wrapper records the immutable source before evaluation, verifies the active Package through the native runner, and rolls an unsuccessful update back to the preceding audited version. No additional DSH Autopilot approval is required because the human already opted into same-process Host code. This is a trust grant, not containment: generated code shares the DSH process and may obtain reachable Host services through the Cordis context, including authority that is not exposed as a model tool. Treat the Cordis VM, source scan, and forbidden-service list as execution, audit, and cooperative policy mechanisms, never as a security sandbox. Use Host extension only in an OS-isolated, disposable, credential-free deployment that can trust the generated source as an ordinary Host plugin.
 
-Under `client-approved`, let DSH's native Client approval flow decide. Never represent approval as granted before DSH reports it. Under `off`, do not attempt definition or activation.
+Under `client-approved`, Client-bearing code is outside the Host-only wrapper and still uses DSH's native Cordis tools and approval UI when the current preset exposes them. Never represent approval as granted before DSH reports it. Under `off`, do not attempt definition or activation.
 
 ## Verify completion
 
@@ -88,5 +91,7 @@ When verification fails, read each fixed-check result, repair the cause in the n
 When verifier infrastructure fails, report the blocked Goal and paused lease accurately. Do not claim completion.
 
 ## Hand off
+
+For a pause, agent transfer, or approaching context limit, call `autopilot_handoff` with a concise recovery summary and the first safe next action. The exact Goal/run pair may be running or already paused/attention; writing the revision-addressed artifact never rearms it. The artifact records Goal/run revisions, budgets, graph, and verification policy but does not preserve live processes or grant the next agent authority.
 
 After a passing verdict, report the outcome, key evidence, and any known non-goals. Mention no hidden reasoning and do not claim checks that were not run.

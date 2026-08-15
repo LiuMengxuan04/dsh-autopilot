@@ -2,13 +2,109 @@
     - id: dsh-autopilot-service
       name: 'dsh-autopilot/service'
       config:
-        defaultMaxGoalRounds: 256
-        maxGoalRounds: 1024
+        defaultMaxGoalRounds: 1024
+        maxGoalRounds: 4096
         defaultMaxActiveMs: 604800000
         maxActiveMs: 2592000000
         maxVerificationAttempts: 3
         maxDynamicPackages: 8
-        selfModification: host-only
+        maxSubagents: 128
+        maxConcurrentSubagents: 4
+        maxTasks: 256
+        maxTaskAttempts: 2048
+        maxEvidenceItems: 4096
+        maxSnapshotBytes: 524288
+        maxAuditRecords: 8192
+        maxAuditBytes: 268435456
+        maxDynamicSourceChars: 262144
+        autoResume: true
+        selfModification: off
+
+    - id: dsh-autopilot-notifications
+      name: 'dsh-autopilot/notification-service'
+      config:
+        enabled: false
+
+    - id: dsh-autopilot-workflows
+      name: 'dsh-autopilot/workflow-service'
+      config:
+        profiles:
+          - id: task-fanout
+            description: Run up to four independent dependency-ready DAG tasks with structured evidence.
+            whenToUse: Several independent implementation, investigation, or review tasks are ready at once.
+            subagentProvider: spawn
+            maxTotalAgents: 4
+            maxArgsBytes: 32768
+            phases:
+              - title: Fan-out
+                detail: Execute independent Autopilot tasks in parallel.
+            script: |
+              const outcomeSchema = {
+                type: 'object',
+                additionalProperties: false,
+                properties: {
+                  status: { type: 'string', enum: ['completed', 'blocked', 'failed'] },
+                  summary: { type: 'string' },
+                  evidence: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      additionalProperties: false,
+                      properties: {
+                        kind: { type: 'string', enum: ['file', 'command', 'test', 'url', 'note', 'subagent'] },
+                        ref: { type: 'string' },
+                        summary: { type: 'string' },
+                      },
+                      required: ['kind', 'ref', 'summary'],
+                    },
+                  },
+                },
+                required: ['status', 'summary', 'evidence'],
+              }
+              const input = JSON.stringify(args.input ?? {})
+              const results = await parallel(args.taskIds.map((taskId) => () => agent(
+                `Complete Autopilot DAG task ${taskId}. Use the workspace directly. Additional bounded context: ${input}. Return completed only with concrete evidence; otherwise return blocked or failed.`,
+                { label: `autopilot-${taskId}`, phase: 'Fan-out', schema: outcomeSchema },
+              )))
+              return {
+                outcomes: results.map((outcome, index) => outcome === null
+                  ? { taskId: args.taskIds[index], status: 'failed', summary: 'workflow child did not complete', evidence: [] }
+                  : { taskId: args.taskIds[index], ...outcome }),
+              }
+
+    - id: dsh-autopilot-lifecycle-hooks
+      name: 'dsh-autopilot/lifecycle-hooks'
+      config:
+        maxHandlers: 64
+        handlerTimeoutMs: 2000
+        beforeToolFailurePolicy: deny
+
+    - id: dsh-autopilot-run-dashboard
+      name: 'dsh-autopilot/run-dashboard-service'
+
+    - id: dsh-autopilot-team
+      name: 'dsh-autopilot/team-service'
+
+    - id: dsh-autopilot-ralph
+      name: 'dsh-autopilot/ralph-service'
+      config:
+        defaultMaxRounds: 32
+        maxRounds: 128
+
+    - id: dsh-autopilot-missions
+      name: 'dsh-autopilot/mission-service'
+      config:
+        maxTasks: 128
+        maxPromptChars: 16384
+        maxTotalPromptChars: 262144
+        maxSourceBytes: 1048576
+
+    - id: dsh-autopilot-delivery
+      name: 'dsh-autopilot/delivery-service'
+      config:
+        maxVerificationRecords: 16
+        maxAuditRecords: 512
+        maxAuditBytes: 67108864
 
     - id: dsh-autopilot-commands
       name: 'dsh-autopilot/commands'
@@ -17,10 +113,54 @@
       name: 'dsh-autopilot/tools'
       config:
         minimumEvidenceItems: 1
-        checks:
-          - name: git-diff
-            command: git diff --check
-            timeoutMs: 120000
+        autoDiscoverChecks: true
+        maxProjectChecks: 8
+        projectCheckTimeoutMs: 600000
+        taskWorkerToolAllowlist:
+          - bash
+          - pwsh
+          - str_replace_editor
+          - glob
+          - grep
+          - lsp
+          - skill
+          - web_search
+          - web_fetch
+          - read_image
+          - todo_write
+          - job_output
+          - job_list
+          - job_kill
+
+    - id: dsh-autopilot-tool-delivery
+      name: 'dsh-autopilot/tool-delivery'
+
+    - id: dsh-autopilot-code-intelligence
+      name: 'dsh-autopilot/code-intelligence'
+
+    - id: dsh-autopilot-visual-qa
+      name: 'dsh-autopilot/visual-qa'
+
+    - id: dsh-autopilot-memory
+      name: 'dsh-autopilot/memory'
+      config:
+        maxEntriesPerWorkspace: 128
+        maxValueChars: 32000
+
+    - id: dsh-autopilot-tool-memory
+      name: 'dsh-autopilot/tool-memory'
+
+    - id: dsh-autopilot-prompt-rules
+      name: 'dsh-autopilot/prompt-rules'
+
+    - id: dsh-autopilot-custom-commands
+      name: 'dsh-autopilot/custom-commands'
 
     - id: dsh-autopilot-skills
       name: 'dsh-autopilot/skills'
+
+    - id: dsh-autopilot-skill-mcp
+      name: 'dsh-autopilot/skill-mcp'
+
+    - id: dsh-autopilot-recovery-coordinator
+      name: 'dsh-autopilot/recovery-coordinator'

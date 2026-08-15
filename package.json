@@ -1,6 +1,6 @@
 {
   "name": "dsh-autopilot",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Bounded autonomous orchestration and dynamic Cordis self-extension for DeepSeek Harness",
   "keywords": [
     "deepseek-harness",
@@ -26,6 +26,10 @@
       "types": "./lib/service.d.ts",
       "default": "./lib/service.js"
     },
+    "./recovery-coordinator": {
+      "types": "./lib/recovery-coordinator.d.ts",
+      "default": "./lib/recovery-coordinator.js"
+    },
     "./commands": {
       "types": "./lib/commands.d.ts",
       "default": "./lib/commands.js"
@@ -38,6 +42,150 @@
       "types": "./lib/skills.d.ts",
       "default": "./lib/skills.js"
     },
+    "./memory": {
+      "types": "./lib/memory.d.ts",
+      "default": "./lib/memory.js"
+    },
+    "./tool-memory": {
+      "types": "./lib/tool-memory.d.ts",
+      "default": "./lib/tool-memory.js"
+    },
+    "./prompt-artifacts": {
+      "types": "./lib/prompt-artifacts.d.ts",
+      "default": "./lib/prompt-artifacts.js"
+    },
+    "./prompt-rules": {
+      "types": "./lib/prompt-rules.d.ts",
+      "default": "./lib/prompt-rules.js"
+    },
+    "./custom-commands": {
+      "types": "./lib/custom-commands.d.ts",
+      "default": "./lib/custom-commands.js"
+    },
+    "./team-service": {
+      "types": "./lib/team-service.d.ts",
+      "default": "./lib/team-service.js"
+    },
+    "./team-state": {
+      "types": "./lib/team-state.d.ts",
+      "default": "./lib/team-state.js"
+    },
+    "./team-store": {
+      "types": "./lib/team-store.d.ts",
+      "default": "./lib/team-store.js"
+    },
+    "./tool-team": {
+      "types": "./lib/tool-team.d.ts",
+      "default": "./lib/tool-team.js"
+    },
+    "./ralph-service": {
+      "types": "./lib/ralph-service.d.ts",
+      "default": "./lib/ralph-service.js"
+    },
+    "./ralph-state": {
+      "types": "./lib/ralph-state.d.ts",
+      "default": "./lib/ralph-state.js"
+    },
+    "./ralph-store": {
+      "types": "./lib/ralph-store.d.ts",
+      "default": "./lib/ralph-store.js"
+    },
+    "./tool-ralph": {
+      "types": "./lib/tool-ralph.d.ts",
+      "default": "./lib/tool-ralph.js"
+    },
+    "./delivery-service": {
+      "types": "./lib/delivery-service.d.ts",
+      "default": "./lib/delivery-service.js"
+    },
+    "./delivery-state": {
+      "types": "./lib/delivery-state.d.ts",
+      "default": "./lib/delivery-state.js"
+    },
+    "./delivery-store": {
+      "types": "./lib/delivery-store.d.ts",
+      "default": "./lib/delivery-store.js"
+    },
+    "./tool-delivery": {
+      "types": "./lib/tool-delivery.d.ts",
+      "default": "./lib/tool-delivery.js"
+    },
+    "./code-intelligence": {
+      "types": "./lib/code-intelligence.d.ts",
+      "default": "./lib/code-intelligence.js"
+    },
+    "./notification-service": {
+      "types": "./lib/notification-service.d.ts",
+      "default": "./lib/notification-service.js"
+    },
+    "./notification-state": {
+      "types": "./lib/notification-state.d.ts",
+      "default": "./lib/notification-state.js"
+    },
+    "./notification-store": {
+      "types": "./lib/notification-store.d.ts",
+      "default": "./lib/notification-store.js"
+    },
+    "./skill-mcp": {
+      "types": "./lib/skill-mcp.d.ts",
+      "default": "./lib/skill-mcp.js"
+    },
+    "./visual-qa": {
+      "types": "./lib/visual-qa.d.ts",
+      "default": "./lib/visual-qa.js"
+    },
+    "./workflow-service": {
+      "types": "./lib/workflow-service.d.ts",
+      "default": "./lib/workflow-service.js"
+    },
+    "./workflow-state": {
+      "types": "./lib/workflow-state.d.ts",
+      "default": "./lib/workflow-state.js"
+    },
+    "./workflow-store": {
+      "types": "./lib/workflow-store.d.ts",
+      "default": "./lib/workflow-store.js"
+    },
+    "./tool-workflow": {
+      "types": "./lib/tool-workflow.d.ts",
+      "default": "./lib/tool-workflow.js"
+    },
+    "./mission-service": {
+      "types": "./lib/mission-service.d.ts",
+      "default": "./lib/mission-service.js"
+    },
+    "./mission-state": {
+      "types": "./lib/mission-state.d.ts",
+      "default": "./lib/mission-state.js"
+    },
+    "./mission-store": {
+      "types": "./lib/mission-store.d.ts",
+      "default": "./lib/mission-store.js"
+    },
+    "./tool-mission": {
+      "types": "./lib/tool-mission.d.ts",
+      "default": "./lib/tool-mission.js"
+    },
+    "./lifecycle-hooks": {
+      "types": "./lib/lifecycle-hooks.d.ts",
+      "default": "./lib/lifecycle-hooks.js"
+    },
+    "./specialist-catalog": {
+      "types": "./lib/specialist-catalog.d.ts",
+      "default": "./lib/specialist-catalog.js"
+    },
+    "./specialist-runner": {
+      "types": "./lib/specialist-runner.d.ts",
+      "default": "./lib/specialist-runner.js"
+    },
+    "./run-dashboard": {
+      "types": "./lib/run-dashboard.d.ts",
+      "default": "./lib/run-dashboard.js"
+    },
+    "./run-dashboard-service": {
+      "types": "./lib/run-dashboard-service.d.ts",
+      "default": "./lib/run-dashboard-service.js"
+    },
     "./cordis.patch.yml": "./cordis.patch.yml",
     "./package.json": "./package.json"
   },
@@ -48,10 +196,14 @@
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "cordis.patch.yml",
+    "capabilities.lock.json",
+    "upstream-features.lock.json",
+    "assets/dsh-autopilot-logo.png",
     "assets/skills/**",
     "docs/**/*.md",
     "README.md",
     "README.zh-CN.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "publishConfig": {
@@ -79,48 +231,80 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "vitest run --config vitest.e2e.config.ts",
-    "check": "pnpm run typecheck && pnpm run lint && pnpm run test:coverage && pnpm run build && pnpm exec publint",
+    "capabilities:check": "node scripts/verify-capabilities.mjs",
+    "capabilities:complete": "node scripts/verify-capabilities.mjs --complete",
+    "capabilities:test": "vitest run tests/unit/verify-capabilities.spec.ts",
+    "check": "pnpm run capabilities:check && pnpm run typecheck && pnpm run lint && pnpm run test:coverage && pnpm run build && pnpm exec publint",
     "pack:check": "pnpm pack --pack-destination .artifacts",
     "prepack": "pnpm run build"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
-    "@deepseek-ai/dsh-agent": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-commands": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-goal": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-llm": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-session": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-shell": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-skill": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.5",
-    "@deepseek-ai/dsh-tools": "0.1.0-rc.5"
+    "@deepseek-ai/dsh-agent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-agent-presets": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-commands": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-cordis-host-runner": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-fs": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-goal": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-mcp-client": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-session": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-session-persistence": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-shell": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-skill": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-storage-domain": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-subagent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-workflow": "0.1.0-rc.6"
   },
   "dependencies": {
+    "@ast-grep/napi": "0.45.1",
     "@deepseek-ai/schemastery": "^3.18.1",
-    "yaml": "^2.4.2"
+    "playwright": "1.61.1",
+    "yaml": "^2.4.2",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.1",
-    "@deepseek-ai/dsh": "link:../harness/apps/cli",
-    "@deepseek-ai/dsh-agent": "link:../harness/packages/core/agent",
-    "@deepseek-ai/dsh-agent-spine-demo": "link:../harness/packages/examples/agent-spine-demo",
-    "@deepseek-ai/dsh-commands": "link:../harness/packages/interaction/commands",
-    "@deepseek-ai/dsh-goal": "link:../harness/packages/goal/goal",
-    "@deepseek-ai/dsh-llm": "link:../harness/packages/llm/llm",
-    "@deepseek-ai/dsh-llm-replay": "link:../harness/packages/test-support/llm-replay",
-    "@deepseek-ai/dsh-session": "link:../harness/packages/core/session",
-    "@deepseek-ai/dsh-shell": "link:../harness/packages/shell/shell",
-    "@deepseek-ai/dsh-scope": "link:../harness/packages/core/scope",
-    "@deepseek-ai/dsh-skill": "link:../harness/packages/skill/skill",
-    "@deepseek-ai/dsh-system-prompt": "link:../harness/packages/core/system-prompt",
-    "@deepseek-ai/dsh-tools": "link:../harness/packages/core/tools",
+    "@deepseek-ai/dsh": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-agent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-agent-presets": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-agent-spine-demo": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-commands": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-cordis-host-runner": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-fs": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-fs-local": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-fs-observation-policy": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-goal": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm-replay": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-mcp-client": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-scope": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-session": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-session-persistence": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-shell": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-skill": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-storage": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-storage-domain": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-storage-json": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-subagent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-tool-fs": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-workflow": "0.1.0-rc.6",
     "@types/node": "^22.20.0",
     "@vitest/coverage-v8": "^4.1.8",
     "oxlint": "1.76.0",
-    "playwright": "1.61.1",
     "publint": "^0.3.21",
     "tsdown": "^0.22.2",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
-  }
+  },
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "tests"
+  },
+  "author": ""
 }

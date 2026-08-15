@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Master"
+  short_description: "Plan and execute safe Git history workflows"
+  default_prompt: "Use the Git Master workflow to inspect history, prepare atomic commits, and handle conflicts safely."

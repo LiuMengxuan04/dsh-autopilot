@@ -1,0 +1,4 @@
+interface:
+  display_name: "Performance Goal"
+  short_description: "Optimize against a measured performance target"
+  default_prompt: "Improve this system against a measurable performance goal and verify the result."

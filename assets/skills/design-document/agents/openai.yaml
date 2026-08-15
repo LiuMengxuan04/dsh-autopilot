@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Document"
+  short_description: "Produce an evidence-backed implementation design"
+  default_prompt: "Investigate this change and write an implementation-ready design document."
