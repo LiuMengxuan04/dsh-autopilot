@@ -751,7 +751,7 @@ describe('Ralph fresh-agent service', () => {
   it('persists every interruption timing and fail-closed resume or reservation race', async () => {
     const taskIds = [
       'exhausted-resume', 'resume-missing', 'resume-failure', 'resume-status', 'resume-abort',
-      'drive-abort', 'reserve-abort', 'start-abort', 'result-abort', 'block-failure',
+      'drive-abort', 'reserve-abort', 'start-abort', 'wait-abort', 'result-abort', 'block-failure',
       'reserve-settle-failure', 'concurrent',
     ]
     const { ctx, agent, goal, ralphFiber } = await harness({
@@ -870,6 +870,17 @@ describe('Ralph fresh-agent service', () => {
     expect(await ctx.autopilotRalph.start(agent, {
       taskId: 'start-abort', instruction: 'abort in start', startSubagent: abortingStart,
       signal: startAbortController.signal,
+    })).toMatchObject({ phase: 'interrupted' })
+
+    const waitAbortController = new AbortController()
+    const waitAbortPending = Promise.withResolvers<SubagentResult>()
+    const abortBeforeWait: ManagedSubagentStart = async () => {
+      waitAbortController.abort(new Error('abort before waiting for child result'))
+      return child('wait-abort-child', waitAbortPending.promise)
+    }
+    expect(await ctx.autopilotRalph.start(agent, {
+      taskId: 'wait-abort', instruction: 'abort before child wait', startSubagent: abortBeforeWait,
+      signal: waitAbortController.signal,
     })).toMatchObject({ phase: 'interrupted' })
 
     const resultAbortController = new AbortController()
